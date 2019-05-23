@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="SystemInfo" table="ums_systeminfo">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="login_name" column="login_name" type="string"/>
+		<property name="login_copyrigh" column="login_copyrigh" type="string"/>
+		<property name="login_desc" column="login_desc" type="string"/>
+		<property name="index_title" column="index_title" type="string"/>
+		<property name="reserve_message01" column="reserve_message01" type="string"/>
+		<property name="reserve_message02" column="reserve_message02" type="string"/>
+		<property name="reserve_message03" column="reserve_message03" type="string"/>
+		<property name="reserve_message04" column="reserve_message04" type="string"/>
+		<property name="reserve_message05" column="reserve_message05" type="string"/>
+ 	</class>
+</hibernate-mapping>

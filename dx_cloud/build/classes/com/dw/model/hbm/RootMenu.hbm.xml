@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="RootMenu" table="ums_menu">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="menu_id" column="menu_id" type="string"/>
+		<property name="menu_name" column="menu_name" type="string"/>
+		<property name="menu_desc" column="menu_desc" type="string"/>
+		<property name="menu_url" column="menu_url" type="string"/>
+		<property name="menu_level" column="menu_level" type="string"/>
+		<property name="menu_id_parent" column="menu_id_parent" type="string"/>
+		<property name="create_time" column="create_time" type="string"/>
+		<property name="update_time" column="update_time" type="string"/>
+		<property name="menu_index" column="menu_index" type="integer"/>
+		<property name="menu_icon_code" column="menu_icon_code" type="string"/>
+	</class>
+</hibernate-mapping>

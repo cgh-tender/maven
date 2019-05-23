@@ -1,0 +1,270 @@
+package com.dw.servce.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.dw.dao.IReportDao;
+import com.dw.servce.IReportService;
+@Service
+public class ReportServiceImpl implements IReportService {
+	@Resource
+	private IReportDao reportDao;
+	public List<Map<String, String>> getReportTableHeadList(Map<String,String> map) {
+		return reportDao.getReportTableHeadList(map);
+	}
+
+	public Map<String, String> getReportRunSql(Map<String,String> map) {
+		return reportDao.getReportRunSql(map);
+	}
+
+	public List<Map<String, String>> getReportFeldsQuery(Map<String,String> map) {
+		return reportDao.getReportFeldsQuery(map);
+	}
+	public List  getReportDataBySql(String sql){
+		return reportDao.getReportDataBySql(sql);
+	}
+	
+	/***
+	 * 通过key，roleid 判断是否存在
+	 */
+	public Boolean checkJurExist(String roleId,String key){
+		return reportDao.checkJurExist(roleId, key);
+	}
+	
+	 /**
+     * 通过key值判断是否存在非法权限
+     * 
+     */
+    
+    public Boolean checkInterFaceExist(String roleId,String url){
+    	return reportDao.checkInterFaceExist(roleId, url);
+    }
+    
+    /**
+     * crm_user_count
+     * 
+     */
+    public List reportCrmUserCount(Map pKeyValue){ // //dt,typ,typecount
+      	Iterator<String> iter  = pKeyValue.keySet().iterator();
+    	String[] dts = null;
+    	String typ = null;
+    	String typecount =null;
+    	  while(iter.hasNext()){
+    		   String key=iter.next();
+    		   String value = pKeyValue.get(key).toString();
+    		   if("dt".equals(key)){
+     		      dts = value.split("-");
+    		   }else if("firstValue".equals(key)){
+     			   String[] type = value.split("_");
+    			   if(type.length >1){
+    				   typ = type[1];
+    			   }else{
+    				   typ = "";
+    			   }
+     		   }else if("secondValue".equals(key)){
+     			   String[] typecounts = value.split("_");
+    			   if(typecounts.length >1){
+    				   typecount = typecounts[1];
+    			   }else{
+    				   typecount = "";
+    			   }
+      		   }
+     	  }
+     	StringBuilder sb = new StringBuilder();
+    	sb.append("SELECT dt, CONCAT(SUBSTR(dt, 1, 4), '年',SUBSTR(dt, 5, 6), '月') dtc,pro_nm,tb_nm,");
+    	if(typecount.equals("0")){
+    		sb.append("all_num,all_innet_num,all_id_innet_num,all_zy_num,all_addUser_num,");
+    	}else if(typecount.equals("1")){
+    		sb.append("oth_num, oth_innet_num,oth_id_innet_num,oth_zy_num,oth_addUser_num,");
+     	}else if(typecount.equals("2")){
+    		sb.append("wb_all_num,wb_innet_num,wb_id_innet_num,wb_zy_num,wb_addUser_num,");
+     	}else if(typecount.equals("3")){
+    		sb.append("fix_all_num,fix_innet_num,fix_id_innet_num,fix_zy_num,fix_addUser_num,");
+     	}else if(typecount.equals("all")){
+     		sb.append("all_num,all_innet_num,all_id_innet_num,all_zy_num,all_addUser_num,");
+     		sb.append("oth_num, oth_innet_num,oth_id_innet_num,oth_zy_num,oth_addUser_num,");
+     		sb.append("wb_all_num,wb_innet_num,wb_id_innet_num,wb_zy_num,wb_addUser_num,");
+     		sb.append("fix_all_num,fix_innet_num,fix_id_innet_num,fix_zy_num,fix_addUser_num,");
+     	}
+    	
+     	sb.append("typ FROM (SELECT  dt, pro_nm, tb_nm,");
+     	
+     	if(typecount.equals("0")){
+    		sb.append("all_num,all_innet_num,all_id_innet_num,all_zy_num,all_addUser_num,");
+    	}else if(typecount.equals("1")){
+    		sb.append("oth_num, oth_innet_num,oth_id_innet_num,oth_zy_num,oth_addUser_num,");
+     	}else if(typecount.equals("2")){
+    		sb.append("wb_all_num,wb_innet_num,wb_id_innet_num,wb_zy_num,wb_addUser_num,");
+     	}else if(typecount.equals("3")){
+    		sb.append("fix_all_num,fix_innet_num,fix_id_innet_num,fix_zy_num,fix_addUser_num,");
+     	}else if(typecount.equals("all")){
+    		sb.append("all_num,all_innet_num,all_id_innet_num,all_zy_num,all_addUser_num,");
+    		sb.append("oth_num, oth_innet_num,oth_id_innet_num,oth_zy_num,oth_addUser_num,");
+    		sb.append("wb_all_num,wb_innet_num,wb_id_innet_num,wb_zy_num,wb_addUser_num,");
+    		sb.append("fix_all_num,fix_innet_num,fix_id_innet_num,fix_zy_num,fix_addUser_num,");
+      	}
+     	
+     	sb.append(" typ  FROM crm_users_count UNION ALL SELECT  dt, '全国' pro_nm,  tb_nm,");
+      	
+     	if(typecount.equals("0")){
+    		sb.append("SUM(all_num) all_num, SUM(all_innet_num) all_innet_num,SUM(all_id_innet_num) all_id_innet_num,SUM(all_zy_num) all_zy_num,SUM(all_addUser_num) all_addUser_num,");
+    	}else if(typecount.equals("1")){
+    		sb.append("SUM(oth_num) oth_num, SUM(oth_innet_num) oth_innet_num, SUM(oth_id_innet_num) oth_id_innet_num,SUM(oth_zy_num) oth_zy_num,SUM(oth_addUser_num) oth_addUser_num,");
+     	}else if(typecount.equals("2")){
+    		sb.append(" SUM(wb_all_num) wb_all_num, SUM(wb_innet_num) wb_innet_num, SUM(wb_id_innet_num) wb_id_innet_num, SUM(wb_zy_num) wb_zy_num, SUM(wb_addUser_num) wb_addUser_num,");
+     	}else if(typecount.equals("3")){
+    		sb.append("SUM(fix_all_num) fix_all_num, SUM(fix_innet_num) fix_innet_num, SUM(fix_id_innet_num) fix_id_innet_num,SUM(fix_zy_num) fix_zy_num,SUM(fix_addUser_num) fix_addUser_num,");
+     	}else if("all".equals(typecount)){
+    		sb.append("SUM(all_num) all_num, SUM(all_innet_num) all_innet_num,SUM(all_id_innet_num) all_id_innet_num,SUM(all_zy_num) all_zy_num,SUM(all_addUser_num) all_addUser_num,");
+    		sb.append("SUM(oth_num) oth_num, SUM(oth_innet_num) oth_innet_num, SUM(oth_id_innet_num) oth_id_innet_num,SUM(oth_zy_num) oth_zy_num,SUM(oth_addUser_num) oth_addUser_num,");
+    		sb.append(" SUM(wb_all_num) wb_all_num, SUM(wb_innet_num) wb_innet_num, SUM(wb_id_innet_num) wb_id_innet_num, SUM(wb_zy_num) wb_zy_num, SUM(wb_addUser_num) wb_addUser_num,");
+    		sb.append("SUM(fix_all_num) fix_all_num, SUM(fix_innet_num) fix_innet_num, SUM(fix_id_innet_num) fix_id_innet_num,SUM(fix_zy_num) fix_zy_num,SUM(fix_addUser_num) fix_addUser_num,");
+      	}
+     	
+      	sb.append("typ FROM crm_users_count GROUP BY tb_nm , dt , typ) aa WHERE 1 = 1 ");
+       	sb.append("AND dt BETWEEN '").append(dts[0]).append("' AND '").append(dts[1]).append("'");
+       	if(!"all".equals(typ)){
+          	sb.append(" AND typ = ").append(typ);
+        }
+      	sb.append(" ORDER BY pro_nm,typ,dt");
+      	 
+     	
+    	return reportDao.reportCrmUserCount(sb.toString());
+    }
+	
+    /***
+     * crm_user_count的head
+     */
+    public List reportCrmUserCountHead(Map pKeyValue){
+    	
+    	Iterator<String> iter  = pKeyValue.keySet().iterator();
+    	String[] dts = null;
+    	String typ = null;
+    	String typecount =null;
+    	while(iter.hasNext()){
+    		 String key=iter.next();
+  		   String value = pKeyValue.get(key).toString();
+  		   if("dt".equals(key)){
+   		      dts = value.split("-");
+  		   }else if("firstValue".equals(key)){
+   			   String[] type = value.split("_");
+  			   if(type.length >1){
+  				   typ = type[1];
+  			   }else{
+  				   typ = "";
+  			   }
+   		   }else if("secondValue".equals(key)){
+   			   String[] typecounts = value.split("_");
+  			   if(typecounts.length >1){
+  				   typecount = typecounts[1];
+  			   }else{
+  				   typecount = "";
+  			   }
+    		}
+     	  }
+    	StringBuilder sb = new StringBuilder("SELECT t.field_name_EN,  t.field_name_CN  FROM  z_report_table_head_info t WHERE t.report_name_EN = 'report_crm_user_count' ");
+      	if(typecount.equals("0")){
+    		sb.append("  AND  ( t.field_name_EN NOT LIKE '%oth_%'  AND t.field_name_EN NOT LIKE '%wb_%' AND t.field_name_EN NOT LIKE '%fix_%' )");
+    	}else if(typecount.equals("1")){
+    		sb.append(" AND (t.field_name_EN NOT LIKE '%all_%'   AND t.field_name_EN NOT LIKE '%wb_%' AND t.field_name_EN NOT LIKE '%fix_%' )");
+     	}else if(typecount.equals("2")){
+    		sb.append(" AND (t.field_name_EN NOT LIKE '%all_%'  AND t.field_name_EN NOT LIKE '%oth_%'   AND t.field_name_EN NOT LIKE '%fix_%' )");
+     	}else if(typecount.equals("3")){
+    		sb.append(" AND (t.field_name_EN NOT LIKE '%all_%'  AND t.field_name_EN NOT LIKE '%oth_%'  AND t.field_name_EN NOT LIKE '%wb_%'   )");
+     	}else if("all".equals(typecount)){
+     		//不执行
+     	}
+      	
+     	return reportDao.reportCrmUserCountHead(sb.toString());
+    }
+    
+    
+    /**
+     * 断传次数，时间段导出
+     */
+     public List<Map> exportProvBreakNumAndTime(Map p ){
+    	 return reportDao.exportProvBreakNumAndTime(p);
+     }
+    
+     
+     /**
+      * 按小时的四个值统计
+      */
+     public List<Map> report_oth_fix_monitor_count(Map p){
+    	 return reportDao.report_oth_fix_monitor_count(p);
+     }
+     
+     /**
+      * 导出
+      */
+     public List<Map> export_report_oth_fix_monitor_count(Map p){
+    	 return reportDao.export_report_oth_fix_monitor_count(p);
+     }
+     
+     
+     public Map getUrlReportMapping(Map requestUrlmap){
+    	 return reportDao.getUrlReportMapping(requestUrlmap);
+     }
+
+	@Override
+	public List<String> getUrlFiledMapping(Map<String, String> requestUrlmap) {
+		List<String> b = new ArrayList<String>();
+		b.add("id");
+		
+		List<String> a = new ArrayList<String>();
+		try {
+			List<Map<String, String>> l = reportDao.getUrlFoledMapping(requestUrlmap);
+			for (int i = 0; i < l.size(); i++) {
+				Map<String, String> ll = l.get(i);
+				if(!b.contains(ll.get("COLUMN_NAME"))) {
+					a.add(ll.get("COLUMN_NAME"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return a;
+	}
+
+	@Override
+	public List<String> getUrlFileds(Map<String, String> requestUrlmap, String eg_nm) {
+		List<String> a = new ArrayList<String>();
+		try {
+			List<Map<String, String>> l = reportDao.getUrlFileds(requestUrlmap,eg_nm);
+			for (int i = 0; i < l.size(); i++) {
+				Map<String, String> ll = l.get(i);
+				a.add(ll.get(eg_nm));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return a;
+	}
+
+	@Override
+	public List<Map<String, String>> getProvCodeName() {
+		return reportDao.getProvCodeName();
+	}
+
+	@Override
+	public List<Map<String, String>> getCityCodeName() {
+		return reportDao.getCityCodeName();
+	}
+
+	@Override
+	public void maintainDS(String table_name) {
+		reportDao.maintainDS(table_name);
+	}
+
+	@Override
+	public List<Map<String, String>> getDirectFiledMapping(Map<String, String> requestUrlmap) {
+		return reportDao.getDirectFiledMapping(requestUrlmap);
+	}
+}

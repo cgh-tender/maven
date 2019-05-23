@@ -1,0 +1,128 @@
+# 如要增加字段请前往 com.dw.dao.IExportDao 进行编写接口[接口参数传 ExportMessage message 进行封装] com.dw.dao.impl.ExportDaoImpl 进行实现
+#测试sql
+getSqls=账期| 省份| 记录数| 空值数| 空值率| 唯一用户数| 类型
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图2 参数: dt 全国数据
+getSqlGuestcall=账期| 省份| 记录数| 记录数占比
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图3 参数: dt 全国数据
+getSqlGuestcallUserProportion=账期| 省份| 用户数| oth_party用户数| mdn_rate用户数占比| oth_party用户数占比
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国异常记录数统计 图4 参数: dt 全国数据
+getSqlGuestcallAbnormalTotal=账期| 省份| mdn_oparty记录数| oparty_mdn记录数| mdn_oparty记录数占比| oparty_mdn记录数占比
+#IDMapping ID体系 ID总量历史趋势图 参数 : dt| prov_id
+getSqlIDMappingIDsystem=账期| 省份| ID累积量| ID总量| ID累积量占比
+#位置融合  dwi_res_regn_mergelocation_msk_d  全国CityId字段校验统计	report_dwi_res_regn_mergelocation_msk_d_citysource	dt|prov_id
+getSqlLocationFusionMergelocationCitysource=账期| 省份| 不一致记录数| 一致记录数| 不一致用户数| 一致用户数| 不一致记录数占比| 一致记录数占比| 不一致用户数占比| 一致用户数占比
+#位置融合  dwi_res_regn_mergelocation_msk_d  全国超速用户数及记录数占比统计	report_dwi_res_regn_mergelocation_msk_d_speeding	dt|prov_id|city_id
+getSqlLocationFusionMergelocationSpeeding=账期| 省份| 地市| 记录数| 用户数| 记录数占比| 用户数占比
+#位置融合 dwi_res_regn_mergelocation_msk_d  全国分类数据源超速记录数统计	report_dwi_res_regn_mergelocation_msk_d_speeding	dt|prov_id|city_id
+LocationFusionMergelocationSpeeding=账期| 省份| 地市|  记录数| 用户数| 记录数占比| 用户数占比
+#位置融合  dwi_res_regn_mergelocation_msk_d  全国乒乓用户数及记录数占比统计	report_dwi_res_regn_mergelocation_msk_d_pp	dt|prov_id|city_id
+getSqlLocationFusionMergelocationPp=账期| 省份| 地市| 记录数| 用户数| 记录数占比
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国分类数据源乒乓记录数统计	report_dwi_res_regn_mergelocation_msk_d_pp	dt|prov_id|city_id
+LocationFusionMergelocationPP=账期| 省份| 地市| OIDD记录数| OIDD用户数| OIDD记录数占比| 3gDPI记录数| 3gDPI用户数| 3gDPI记录数占比| DDR记录数| DDR用户数| DDR记录数占比| WCDR记录数| WCDR用户数| WCDR记录数占比| 4gDPI记录数| 4gDPI用户数| 4gDPI记录数占比
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国城市用户数及记录数统计	report_dwi_res_regn_mergelocation_msk_d_cityid	dt|prov_id|city_id
+getSqlLocationFusionMergelocationCityid=账期| 省份| 地市|   OIDD城市个数| OIDD记录数| OIDD用户数| 3gDPI城市个数| 3gDPI记录数| 3gDPI用户数| DDR城市个数| DDR记录数| DDR用户数| WCDR城市个数| WCDR记录数| WCDR用户数| 4gDPI城市个数| 4gDPI记录数| 4gDPI用户数
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国城市用户数及记录数波动率统计	report_dwi_res_regn_mergelocation_msk_d_prov_volatility	dt|prov_id|city_id
+getSqlLocationFusionMergelocationVlatility=账期|省份|地市|记录数|记录数波动率|用户数|用户数波动率
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国城市分类数据源用户数及记录数波动率统计	report_dwi_res_regn_mergelocation_msk_d_prov_source_volatility	dt|prov_id|city_id
+getSqlLocationFusionprovSourceVolatility=账期|   省份| 地市| OIDD记录数| 3gDPI记录数| DDR记录数| WCDR记录数| 4gDPI记录数| OIDD用户数| 3gDPI用户数| DDR用户数| WCDR用户数| 4gDPI用户数| OIDD记录数波动率| 3gDPI记录数波动率| DDR记录数波动率| WCDR记录数波动率| 4gDPI记录数波动率| OIDD用户数波动率| 3gDPI用户数波动率| DDR用户数波动率| WCDR用户数波动率| 4gDPI用户数波动率
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国分时段城市用户数及记录数统计	report_dwi_res_regn_mergelocation_msk_d_24timeslot	dt|prov_id|time[00|01|02|...23]
+LocationFusionMergelocation24timeslot=账期| 省份| 时段| 地市个数| 记录数| 用户数
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国用户数统计	report_dwi_res_regn_mergelocation_msk_d_interval	dt|prov_id
+LocationFusionMergelocationSourceNumRate=账期| 省份| 地市|   OIDD记录数| 3gDPI记录数| DDR记录数| WCDR记录数| 4gDPI记录数| OIDD记录数占比| 3gDPI记录数占比| DDR记录数占比| WCDR记录数占比| 4gDPI记录数占比| OIDD用户数| 3gDPI用户数| DDR用户数| WCDR用户数| 4gDPI用户数| OIDD用户数占比| 3gDPI用户数占比| DDR用户数占比| WCDR用户数占比| 4gDPI用户数占比
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国用户数统计	report_dwi_res_regn_mergelocation_msk_d_interval	dt|prov_id|city_id
+LocationFusionMergelocation_mskInterval=账期| 省份| 地市|   区间为1的记录数| 区间为2-10的记录数| 区间为10-24的记录数| 区间为24-48的记录数| 区间大于48的记录数| 区间为1的用户数| 区间为2-10的用户数| 区间为10-24的用户数| 区间为24-48的用户数| 区间大于48的用户数
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国分区间位置更新用户数及记录数统计	report_dwi_res_regn_mergelocation_msk_d_update_interval	dt|prov_id
+LocationFusionMergelocationUpdateInterval=账期|省份|[0,10)位置更新记录数|[0,10}位置更新用户数|[10,20)位置更新记录数|[10,20}位置更新用户数|[20,30)位置更新记录数|[20,30)位置更新用户数|[30,40)位置更新记录数|[30,40)位置更新用户数|[40,60)位置更新记录数|[40,60)位置更新用户数|[60,90)位置更新记录数|[60,90)位置更新用户数|[90,120)位置更新记录数|[90,120)位置更新用户数|[120,max)位置更新记录数|[120,max)位置更新用户数
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国用户停留城市用户数统计出行省份	report_dwi_res_regn_mergelocation_msk_d_range_provid	dt,prov_id（全国）
+LocationFusionMergelocationRangeProvid=账期|省份|区间为1的记录数|区间为1的用户数|区间为2的记录数|区间为2的用户数|区间为3的记录数|区间为3的用户数|区间为4的记录数|区间为4的用户数|区间为5的记录数|区间为5的用户数|区间为6的记录数|区间为6的用户数|区间为7的记录数|区间为7的用户数|区间为8的记录数|区间为8的用户数|区间为9的记录数|区间为9的用户数|区间为10的记录数|区间为10的用户数|区间为11的记录数|区间为11的用户数|区间为12的记录数|区间为12的用户数
+#位置融合 dwi_res_regn_mergelocation_msk_d 全国用户停留城市用户数统计出行城市	report_dwi_res_regn_mergelocation_msk_d_range_cityid	dt,prov_id(全国)  city_id
+LocationFusionMergelocationRangeCityid=账期|省份|地市|区间为1记录数|区间为1用户数|区间为2记录数|区间为2用户数|区间为3记录数|区间为3用户数|区间为4记录数|区间为4用户数|区间为5记录数|区间为5用户数|区间为6记录数|区间为6用户数|区间为7记录数|区间为7用户数|区间为8记录数|区间为8用户数|区间为9记录数|区间为9用户数|区间为[10,20)记录数|区间为[10,20)用户数|区间为[20,30)记录数|区间为[20,30)用户数|区间为[30,max)记录数|区间为[30,max)用户数
+#停留点 dwi_res_regn_staypoint_msk_d  全国分省乒乓记录数统计	report_dwi_res_regn_staypoint_msk_d_pp_all_num	dt,prov_id,city_id
+StoppingPointStaypointPPAllNum=账期|省份|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d  全国分地市乒乓记录数统计	report_dwi_res_regn_staypoint_msk_d_pp_num	dt,prov_id,city_id
+StoppingPointStaypointPPNum=账期|省份|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d  记录数及用户数统计	report_dwi_res_regn_staypoint_msk_d_num	dt,prov_id,city_id
+StoppingPointStaypointDNum=账期|省份|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d 分时段记录数及用户数统计	report_dwi_res_regn_staypoint_msk_d_24hour_num	dt,prov_id,city_id,time
+StoppingPointStaypoint24hourNum=账期|省份|地市|时段|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d 用户记录数区间统计	report_dwi_res_regn_staypoint_msk_d_interval	dt,prov_id,city_id
+StoppingPointStaypointInterval=账期|省份|地市|区间为1的记录数|区间为1的用户数|区间为2-10的记录数|区间为2-10的用户数|区间为11-24的记录数|区间为11-24的用户数|区间为25-48的记录数|区间为25-48的用户数|区间大于49的记录数|区间大于49的用户数
+#停留点 dwi_res_regn_staypoint_msk_d 单用户记录数统计	report_dwi_res_regn_staypoint_msk_d_sixhours	dt,prov_id,city_id
+StoppingPointStaypointSixhours=账期|省份|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d  统计网格停留数分布情况{看看表中那天有数据} 20190115 - 20190123	report_dwi_res_regn_staypoint_msk_d_point	dt,prov_id,city_id
+StoppingPointStaypointPoint=账期|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d 无停留记录点网格点统计	report_dwi_res_regn_staypoint_msk_d_nogrid	dt,prov_id,city_id
+StoppingPointStaypointNogrid=账期|省份|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d  无停留点用户数统计	report_dwi_res_regn_staypoint_msk_d_nopoint	dt,prov_id,city_id
+StoppingPointStaypointNopoint=账期|省份|地市|记录数|用户数
+#停留点 dwi_res_regn_staypoint_msk_d 停留时间分布	report_dwi_res_regn_staypoint_msk_d_rangetime	dt,prov_id,city_id
+StoppingPointStaypointRangetime=账期|省份|地市|区间为5的记录数|区间为5的用户数|区间为5-10的记录数|区间为5-10的用户数|区间为10-30的记录数|区间为10-30的用户数|区间为30-60的记录数|区间为30-60的用户数|区间为60-120的记录数|区间为60-120的用户数|区间大于120的记录数|区间大于120的用户数
+#跨域 dws_wdtb_city_od_msk_d 记录数稽核{看看表中那天有数据}20181220,20190115,20190116,20190117,20190118	report_dws_wdtb_city_od_msk_d	dt,prov_id,city_id
+CrossDomainCity=账期|省份|地市|记录数|记录数波动率|用户数|用户数波动率
+#跨域 dws_wdtb_city_od_msk_d OD出行时长分布	report_dws_wdtb_city_od_msk_d_rangetime	dt,prov_id,city_id
+CrossDomainCityRangetime=账期|省份|地市|区间为0-1的记录数|区间为0-1的用户数|区间为1-2的记录数|区间为1-2的用户录数|区间为2-3的记录数|区间为2-3的用户数|区间为3-4的记录数|区间为3-4的用户数|区间为4-5的记录数|区间为4-5的用户数|区间为5-6的记录数|区间为5-6的用户数|区间为6-7的记录数|区间为6-7的用户数|区间为7-8的记录数|区间为7-8的用户数|区间为8-9的记录数|区间为8-9的用户数|区间为9-10的记录数|区间为9-10的用户数|区间为10-11的记录数|区间为10-11的用户数|区间为11-12的记录数|区间为11-12的用户数|区间为12-13的记录数|区间为12-13的用户数|区间为13-14的记录数|区间为13-14的用户数|区间为14-15的记录数|区间为14-15的用户数|区间为15-16的记录数|区间为15-16的用户数|区间为16-17的记录数|区间为16-17的用户数|区间为17-18的记录数|区间为17-18的用户数|区间为18-19的记录数|区间为18-19的用户数|区间为19-20的记录数|区间为19-20的用户数|区间为20-21的记录数|区间为20-21的用户数|区间为21-22的记录数|区间为21-22的用户数|区间为22-23的记录数|区间为22-23的用户数|区间为23-24的记录数|区间为23-24的用户数|区间为24-48的记录数|区间为24-48的用户数
+#跨域 dws_wdtb_city_od_msk_d OD出行距离分布	report_dws_wdtb_city_od_msk_d_distance	dt,prov_id,city_id
+CrossDomainCityDistance=账期|省份|地市|区间为0-100的记录数|区间为0-100的用户数|区间为100-200的记录数|区间为100-200的用户数|区间为200-300的记录数|区间为200-300的用户数|区间为300-400的记录数|区间为300-400的用户数|区间为400-500的记录数|区间为400-500的用户数|区间为500-600的记录数|区间为500-600的用户数|区间为600-700的记录数|区间为600-700的用户数|区间为700-800的记录数|区间为700-800的用户数|区间为800-900的记录数|区间为800-900的用户数|区间为900-1000的记录数|区间为900-1000的用户数|区间为1000-2000的记录数|区间为1000-2000的用户数|区间大于2000的记录数|区间大于2000的用户数
+#跨域 dws_wdtb_city_od_msk_d 流出人口分布统计	report_dws_wdtb_city_od_msk_d_out	dt,prov_id,city_id
+CrossDomainCityOut=账期|省份|地市|记录数|用户数
+# 跨域 dws_wdtb_city_od_msk_d  流入人口分布统计	report_dws_wdtb_city_od_msk_d_in	dt,prov_id,city_id
+CrossDomainCityIn=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_city_od_msk_d 流入流出人口分布_OD是否相同	report_dws_wdtb_city_od_msk_d_xor	dt,prov_id,city_id
+CrossDomainCityXor=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_city_od_msk_d OD出行方式分布(以出行距离进行行转列)	report_dws_wdtb_city_od_msk_d_range	dt,prov_id,city_id
+CrossDomainCityRange=账期|省份|地市|其他-其他用户数|其他-飞机用户数|其他-高铁用户数|其他-火车用户数|飞机-其他用户数|飞机-飞机用户数|飞机-高铁用户数|飞机-火车用户数|高铁-其他用户数|高铁-飞机用户数|高铁-高铁用户数|高铁-火车用户数|火车-其他用户数|火车-飞机用户数|火车-高铁用户数|火车-火车用户数
+#跨域 dws_wdtb_county_od_msk_d  用户数、记录数及波动率统计	report_dws_wdtb_city_od_msk_d	dt,prov_id,city_id
+CrossDomaiCityMsk_d=账期|省份|地市|记录数|记录数波动率|用户数|用户数波率
+#跨域 dws_wdtb_county_od_msk_d OD出行时长分布	report_dws_wdtb_city_od_msk_d_rangetime	dt,prov_id,city_id
+CrossDomainCityMsk_D_Rangetime=账期|省份|地市|区间为0-1记录数|区间为0-1用户数|区间为1-2记录数|区间为1-2用户数|区间为2-3记录数|区间为2-3用户数|区间为3-4记录数|区间为3-4用户数|区间为4-5记录数|区间为4-5用户数|区间为5-6记录数|区间为5-6用户数|区间为6-7记录数|区间为6-7用户数|区间为7-8记录数|区间为7-8用户数|区间为8-9记录数|区间为8-9用户数|区间为9-10记录数|区间为9-10用户数|区间为10-11记录数|区间为10-11用户数|区间为11-12记录数|区间为11-12用户数|区间为12-13记录数|区间为12-13用户数|区间为13-14记录数|区间为13-14用户数|区间为14-15记录数|区间为14-15用户数|区间为15-16记录数|区间为15-16用户数|区间为16-17记录数|区间为16-17用户数|区间为17-18记录数|区间为17-18用户数|区间为18-19记录数|区间为18-19用户数|区间为19-20记录数|区间为19-20用户数|区间为20-21记录数|区间为20-21用户数|区间为21-22记录数|区间为21-22用户数|区间为22-23记录数|区间为22-23用户数|区间为23-24记录数|区间为23-24用户数|区间为24-48记录数|区间为24-48用户数|区间大于48记录数|区间大于48用户数
+#跨域 dws_wdtb_county_od_msk_d  OD出行距离分布	report_dws_wdtb_city_od_msk_d_distance	dt,prov_id,city_id
+CrossDomainCityMsk_D_Distance=账期|省份|地市|区间为0-100记录数|区间为0-100用户数|区间为100-200记录数|区间为100-200用户数|区间为200-300记录数|区间为200-300用户数|区间为300-400记录数|区间为300-400用户数|区间为400-500记录数|区间为400-500用户数|区间为500-600记录数|区间为500-600用户数|区间为600-700记录数|区间为600-700用户数|区间为700-800记录数|区间为700-800用户数|区间为800-900记录数|区间为800-900用户数|区间为900-1000记录数|区间为900-1000用户数|区间为1000-2000记录数|区间为1000-2000用户数|区间大于2000记录数|区间大于2000用户数
+#跨域 dws_wdtb_county_od_msk_d 流出人口分布统计	report_dws_wdtb_city_od_msk_d_out	dt,prov_id,city_id
+CrossDomainCityMsk_D_Out=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_county_od_msk_d 流入人口分布统计	report_dws_wdtb_city_od_msk_d_in	dt,prov_id,city_id
+CrossDomainCityMsk_D_In=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_county_od_msk_d 流入流出人口分布_OD是否相同	report_dws_wdtb_city_od_msk_d_xor	dt,prov_id,city_id
+CrossDomainCityMsk_D_xor=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_history_access_county_msk_d 合规记录数及占比统计	report_dws_wdtb_history_access_city_msk_d	dt,prov_id,city_id
+CrossDomainHistoryAccessCityMsk_D=账期|省份|地市|记录数|用户数|记录数占比|用户数占比
+#跨域 dws_wdtb_history_access_city_msk_d 乒乓城市个数统计	report_dws_wdtb_history_access_city_msk_d_pp	dt,prov_id,city_id
+CrossDomainHistoryAccessCityMsk_D_PP=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_history_access_city_msk_d 记录数稽核	report_dws_wdtb_history_access_msk_d_num
+CrossDomainHistoryAccessCityMsk_D_NUM=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_history_access_county_msk_d 合规记录数及占比统计	report_dws_wdtb_history_access_city_msk_d	dt,prov_id,city_id
+CrossDomainHistoryAccessCityMsk_D1=账期|省份|地市|记录数|用户数|记录数占比|用户数占比
+#跨域 dws_wdtb_history_access_county_msk_d 乒乓城市个数统 report_dws_wdtb_history_access_county_msk_d_pp	dt,prov_id,city_id
+CrossDomainHistoryAccessCityMsk_D_PP1=账期|省份|地市|记录数|用户数
+#跨域 dws_wdtb_history_access_city_msk_d	记录数稽核	report_dws_wdtb_history_access_msk_d_num	dt,prov_id,city_id
+CrossDomainHistoryAccessCityMsk_D_NUM1=账期|省份|地市|记录数|用户数
+#小蜗牛集市	 用户基础信息表  dal_snail_user_info_msk_m	全国记录数及用户数统计下载
+SmallACCUser=账期|省份|用户数|用户数占比
+#dws_wdtb_user_traffic_city_population_msk_w	全国用户数及波动率统计{波动率}20190121	report_dws_wdtb_user_traffic_city_population_msk_w	dt,prov_id,city_id
+ResidentialPopulationAttributecityVolatility=账期|省份|地市|记录数|记录数波动率|用户数|用户数波动率
+#居住人口属性 dws_wdtb_workplace_msk_w 当前工作地置信度用户统计	report_dws_wdtb_workplace_msk_w_tracking	dt,prov_id,city_id
+ResidentialPopulationAttributeWorkplaceTracking=账期|省份|地市|记录数|用户数
+#用户帐务信息月宽表 dwi_act_acct_user_info_msk_m 在网移动用户账户信息分布统计	report_dwi_act_acct_user_info_msk_m_cut	dt,prov_id
+CRMAcctUserInfoCUT=账期|省份|缴费次数1的记录数|缴费次数[2,10)的记录数|缴费次数[10,50)的记录数|缴费次数>=50的记录数|缴费次数1的用户数|缴费次数[2,10)的用户数|缴费次数[10,50)的用户数|缴费次数>=50的用户数
+#用户帐务费用信息月宽表	dwi_act_acct_user_fee_msk_m  在网移动用户账户信息分布统计	report_dwi_act_acct_user_fee_msk_m_cut	dt,prov_id
+CRMAcctUserFeeCUT=账期|省份|缴费次数1的记录数|缴费次数[2,10)的记录数|缴费次数[10,50)的记录数|缴费次数>=50的记录数|缴费次数1的用户数|缴费次数[2,10)的用户数|缴费次数[10,50)的用户数|缴费次数>=50的用户数
+#居住人口属性 dws_wdtb_workplace_msk_w {看看表中那天有数据}	report_dws_wdtb_workplace_msk_w_city_volatility	dt,prov_id
+ResidentialPopulationAttributeWorkplaceVolatility=账期|省份|地市|记录数|记录数波动率|用户数|用户数波动率
+#CRM 用户帐务信息月宽表 dwi_act_acct_user_info_msk_m 在网移动用户账户信息情况统计	report_dwi_act_acct_user_info_msk_m_type dt,prov_id,eg_nm=[all,pay_fee,pay_cnt,bill_fee](没有全部,全国 数据的问题请注意)
+CRMAcctUserInfoType=账期|省份|统计字段|最小值|最大值|中位数|平均值
+#CRM 用户帐务费用信息月宽表 dwi_act_acct_user_fee_msk_m 在网移动用户账户信息情况统计	report_dwi_act_acct_user_fee_msk_m_type	dt,prov_id,eg_nm=[all,pay_fee,pay_cnt,owe_months,consume_fee](没有全部,全国 数据的问题请注意)
+CRMAcctUserFeetype=账期|省份|统计字段|最小值|最大值|中位数|平均值
+#居住人口属性 dws_wdtb_resident_msk_w 用户数及波动率统计{这个日期有数据20190127}	report_dws_wdtb_resident_msk_w_city_volatility	dt,prov_id
+ResidentialPopulationAttributeResidentCityVolatility=账期|省份|地市|记录数|记录数占比|用户数|用户数占比
+#商业地产集市 商圈热力图表	o2oestate_trade_heatmap_msk_m 空值率
+businessNUllRaito=账期|时段|记录数|center_lati空值数|center_lati空值率|center_longi空值数|center_longi空值率|city_id空值数|city_id空值率|county_id空值数|county_id空值率|grid_id空值数|grid_id空值率|mall_id空值数|mall_id空值率|month_id空值数|month_id空值率|month_interval空值数|month_interval空值率|population_type空值数|population_type空值率|prov_id空值数|prov_id空值率|resi_count空值数|resi_count空值率|resi_work_count空值数|resi_work_count空值率|trade_id空值数|trade_id空值率|work_count空值数|work_count空值率
+#应用稽核 商业地产集市 商圈热力图表	o2oestate_trade_heatmap_msk_m  零值率
+businessZeroRaito=账期|时段|记录数|center_lati零值数|center_lati零值率|center_longi零值数|center_longi零值率|city_id零值数|city_id零值率|county_id零值数|county_id零值率|grid_id零值数|grid_id零值率|mall_id零值数|mall_id零值率|month_id零值数|month_id零值率|month_interval零值数|month_interval零值率|population_type零值数|population_type零值率|prov_id零值数|prov_id零值率|resi_count零值数|resi_count零值率|resi_work_count零值数|resi_work_count零值率|trade_id零值数|trade_id零值率|work_count零值数|work_count零值率
+#应用稽核 商业地产集市 商圈热力图表	o2oestate_trade_heatmap_msk_m   合规率
+businessHeguiRaito=账期|时段|记录数|center_lati合规数|center_lati合规率|center_longi合规数|center_longi合规率|city_id合规数|city_id合规率|county_id合规数|county_id合规率|grid_id合规数|grid_id合规率|mall_id合规数|mall_id合规率|month_id合规数|month_id合规率|month_interval合规数|month_interval合规率|population_type合规数|population_type合规率|prov_id合规数|prov_id合规率|resi_count合规数|resi_count合规率|resi_work_count合规数|resi_work_count合规率|trade_id合规数|trade_id合规率|work_count合规数|work_count合规率
+#应用稽核 商业地产集市 商场热力图表	o2oestate_mall_heatmap_msk_m 空值率
+businessNUllmallRaito=账期|时段|记录数|center_lati空值数|center_lati空值率|center_longi空值数|center_longi空值率|city_id空值数|city_id空值率|county_id空值数|county_id空值率|grid_id空值数|grid_id空值率|mall_id空值数|mall_id空值率|month_id空值数|month_id空值率|month_interval空值数|month_interval空值率|population_type空值数|population_type空值率|prov_id空值数|prov_id空值率|resi_count空值数|resi_count空值率|resi_work_count空值数|resi_work_count空值率|trade_id空值数|trade_id空值率|work_count空值数|work_count空值率
+#应用稽核 商业地产集市 商场热力图表	o2oestate_mall_heatmap_msk_m  零值率
+businessZeromallRaito=账期|时段|记录数|center_lati零值数|center_lati零值率|center_longi零值数|center_longi零值率|city_id零值数|city_id零值率|county_id零值数|county_id零值率|grid_id零值数|grid_id零值率|mall_id零值数|mall_id零值率|month_id零值数|month_id零值率|month_interval零值数|month_interval零值率|population_type零值数|population_type零值率|prov_id零值数|prov_id零值率|resi_count零值数|resi_count零值率|resi_work_count零值数|resi_work_count零值率|trade_id零值数|trade_id零值率|work_count零值数|work_count零值率
+#应用稽核 商业地产集市 商场热力图表	o2oestate_mall_heatmap_msk_m  合规率
+businessHeguimallRaito=账期|时段|记录数|center_lati合规数|center_lati合规率|center_longi合规数|center_longi合规率|city_id合规数|city_id合规率|county_id合规数|county_id合规率|grid_id合规数|grid_id合规率|mall_id合规数|mall_id合规率|month_id合规数|month_id合规率|month_interval合规数|month_interval合规率|population_type合规数|population_type合规率|prov_id合规数|prov_id合规率|resi_count合规数|resi_count合规率|resi_work_count合规数|resi_work_count合规率|trade_id合规数|trade_id合规率|work_count合规数|work_count合规率
+

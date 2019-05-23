@@ -1,0 +1,52 @@
+package com.dw.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+
+import com.dw.common.base.TempJdbcDao;
+import com.dw.dao.ILogDao;
+import com.dw.model.Log;
+import com.dw.util.LogUtil;
+@Repository
+public class LogDao extends TempJdbcDao implements ILogDao {
+
+	public void createLogTable(String tableName) {
+		try {
+			String sql = "create table if not exists " +tableName + " like t_logs" ;
+			Session session=getCurrentSession();
+			Query q=session.createSQLQuery(sql);
+			q.executeUpdate();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<Log> findNearestLogs(int i) {
+		return null;
+	}
+	/**
+	 * 保存日志
+	 * @param log
+	 */
+	public void saveEntity(Log log) {
+		try {
+			Session session=getCurrentSession();
+			String sql = "insert into " 
+					+ LogUtil.generateLogTableName(0) 
+					+ "(c_operator,c_opername,c_operparams,c_operresult,c_resultmsg,c_opertime) "
+					+ "values(?,?,?,?,?,?)" ;
+			Query q=session.createSQLQuery(sql);
+q.setParameter(0, log.getOperator()).setParameter(1, log.getOperName())
+.setParameter(2, log.getOperParams()).setParameter(3,log.getOperResult())
+.setParameter(4, log.getResultMsg()).setParameter(5, log.getOperTime());
+			q.executeUpdate();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

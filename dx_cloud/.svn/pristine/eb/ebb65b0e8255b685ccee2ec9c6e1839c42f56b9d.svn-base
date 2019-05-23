@@ -1,0 +1,26 @@
+package com.dw.dao;
+
+import java.util.List;
+
+import com.dw.model.Log;
+
+public interface ILogDao {
+/**
+ * 保存日志
+ * @param log
+ */
+	void saveEntity(Log log);
+
+
+	/**
+	 * 通过表明创建日志表
+	 */
+	public void createLogTable(String tableName);
+
+	/**
+	 * 查询最近指定月份数的日志
+	 */
+	public List<Log> findNearestLogs(int i);
+	
+
+}

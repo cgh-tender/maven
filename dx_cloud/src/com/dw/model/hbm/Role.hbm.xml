@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="Role" table="ums_role">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="role_id" column="role_id" type="string"/>
+		<property name="role_name" column="role_name" type="string"/>
+		<property name="role_desc" column="role_desc" type="string"/>
+		<property name="create_time" column="create_time" type="string"/>
+		<property name="update_time" column="update_time" type="string"/>
+		<property name="role_index" column="role_index" type="integer"/>
+	</class>
+</hibernate-mapping>

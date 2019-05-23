@@ -1,0 +1,82 @@
+package com.dw.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hwpf.model.Sttb;
+import org.springframework.mail.MailMessage;
+import org.springframework.stereotype.Service;
+
+import com.dw.model.ExportMessage;
+
+public interface IExportDao {
+
+	List<Map<String, Object>> test(ExportMessage message);
+
+	/**
+	 * 获取指定字段的内容
+	 * @return
+	 */
+	HashMap<String, Object> getFieldsMap(Map<String, Object> map) throws Exception;
+
+	void getFieldHeadHibenate(ExportMessage message,String sql) throws Exception;
+	/**
+	 * 获取 数据
+	 * @param sql 
+	 * @param sql
+	 * @return
+	 * @throws Exception
+	 */
+	List<Map<String, Object>> getData(ExportMessage message, String sql) throws Exception;
+	/**
+	 * 获取行数
+	 * @param sql
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getCount(ExportMessage message, String sql)throws Exception;
+	
+	/**
+	 * 测试 sql
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqls(ExportMessage message) throws Exception;
+	
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图2 参数: dt 全国数据
+	 * dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d
+	 * report_ac_cust_call.do?fieldNameEN=requestType1,requestType2,dts&fieldVal=2,dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d,20190310-20190316&typechart=1
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcall(ExportMessage message) throws Exception;
+
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图3 参数: dt 全国数据
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcallUserProportion(ExportMessage message) throws Exception;
+	
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国异常记录数统计 图4 参数: dt 全国数据
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcallAbnormalTotal(ExportMessage message)throws Exception;
+	
+	/**
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuest(ExportMessage message) throws Exception;
+
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="Organization" table="ums_organization">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="orgId" column="org_id" type="string"/>
+		<property name="orgName" column="org_name" type="string"/>
+		<property name="orgDesc" column="org_desc" type="string"/>
+		<property name="orgLevel" column="org_level" type="string"/>
+		<property name="orgIdParent" column="org_id_parent" type="string"/>
+		<property name="createTime" column="create_time" type="string"/>
+		<property name="updateTime" column="update_time" type="string"/>
+	</class>
+</hibernate-mapping>

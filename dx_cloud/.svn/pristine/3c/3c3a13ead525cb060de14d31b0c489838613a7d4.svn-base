@@ -1,0 +1,192 @@
+package com.dw.common;
+
+import java.util.ArrayList;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.LoggerFactory;
+
+import com.dw.advice.Logger;
+import com.dw.model.ExportMessage;
+import com.google.inject.spi.Message;
+
+public class FieldPublicFilter {
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(FieldPublicFilter.class);
+	private static volatile FieldPublicFilter instance = null;
+	private HashMap<String, String> pv;
+	private HashMap<String, String> ct;
+	private HashMap<String, String> pvo;
+	private HashMap<String, String> cacheSqlMap = new HashMap<String, String>();
+	private List<String> bdt = new ArrayList<String>();// dt
+	private List<String> bpr = new ArrayList<String>();// prov_id
+	private List<String> bct = new ArrayList<String>();// city_id
+	private List<String> bhb = new ArrayList<String>();// hivetable
+	private List<String> req = new ArrayList<String>();
+	
+	private FieldPublicFilter() {
+		System.out.println("Create FieldPublicFilter" );
+		bdt = Arrays.asList("day", "dt", "dts", "sd_date", "day_id", "month_id", "month");
+		bpr = Arrays.asList("prov_id", "pro_id", "pro_nm", "prov_nm", "prov_name", "prov_num", "pro_code", "o_prov_id",
+				"d_prov_id");
+		bct = Arrays.asList("city_id", "city_nm", "city_name", "city", "o_city_id", "d_city_id");
+		bhb = Arrays.asList("tb_nm", "field_name", "tb_en", "tb_ch", "tb_ch_nm", "tb_cn", "tb_data", "tb_en_nm",
+				"tb_name", "tb_nm_CN", "tb_nm_EN", "hive_table_name");
+		req = Arrays.asList("$star_dts}","${end_dts}","${prov_id}","${city_id}");
+		
+	}
+	
+	public static FieldPublicFilter getInstance() {
+		if (instance == null) {
+			synchronized (FieldPublicFilter.class) {
+				if (instance == null) {
+					instance = new FieldPublicFilter();
+				}
+			}
+		}
+		return instance;
+	}
+
+	public HashMap<String, String> getPv() {
+		return pv;
+	}
+
+	public void setPv(List<Map<String, String>> pvList) {
+		pvo = new HashMap<String, String>();
+		pv = new HashMap<String, String>();
+		for (Map<String, String> map : pvList) {
+			pvo.put(map.get("oth_prov_id"), map.get("prov_name"));
+		}
+		for (Map<String, String> map : pvList) {
+			pv.put(map.get("prov_id"), map.get("prov_name"));
+		}
+	}
+
+	public void setCt(List<Map<String, String>> ctList) {
+		ct = new HashMap<String, String>();
+		for (Map<String, String> map : ctList) {
+			ct.put(map.get("latn_id"), map.get("latn_name"));
+		}
+	}
+	
+	public HashMap<String, String> getCt() {
+		return ct;
+	}
+
+	public HashMap<String, String> getPvo() {
+		return pvo;
+	}
+
+	public List<String> getBdt() {
+		return bdt;
+	}
+
+	public List<String> getBpr() {
+		return bpr;
+	}
+
+	public List<String> getBct() {
+		return bct;
+	}
+
+	public List<String> getBhb() {
+		return bhb;
+	}
+	
+	/**
+	 * 对 省份进行 编码转义
+	 * @param pn
+	 * @return
+	 */
+	public String getpvtoC(String pn) {
+		String sql =  " (case " + pn;
+		for(String pvCodeString : pv.keySet()) {
+			sql += " when '" + pvCodeString + "' then '" + pv.get(pvCodeString) + "'";
+		}
+		return sql + " else " + pn + " end) ";
+	}
+
+	/**
+	 * 对 省份进行 编码转义
+	 * @param pn
+	 * @return
+	 */
+	public String getpvotoC(String pn) {
+		String sql =  " (case " + pn;
+		for(String pvCodeString : pvo.keySet()) {
+			sql += " when '" + pvCodeString + "' then '" + pv.get(pvCodeString) + "'";
+		}
+		return sql + " else " + pn + " end) ";
+	}
+	
+	/**
+	 * 对 地市进行 编码转义
+	 * @param pn
+	 * @return
+	 */
+	public String getcttoC(String cn) {
+		String sql = " (case " + cn;
+		for(String ctCodeString : ct.keySet()) {
+			sql += " when '" + ctCodeString + "' then '" + ct.get(ctCodeString) + "'";
+		}
+		return sql + " else " + cn + " end) ";
+	}
+
+	public List<String> getReq() {
+		return req;
+	}
+	public static String getEncoding(String str) {      
+	       String encode = "GB2312";      
+	      try {      
+	          if (str.equals(new String(str.getBytes(encode), encode))) {      //判断是不是GB2312
+	               String s = encode;      
+	              return s;      //是的话，返回“GB2312“，以下代码同理
+	           }      
+	       } catch (Exception exception) {      
+	       }      
+	       encode = "ISO-8859-1";      
+	      try {      
+	          if (str.equals(new String(str.getBytes(encode), encode))) {      //判断是不是ISO-8859-1
+	               String s1 = encode;      
+	              return s1;      
+	           }      
+	       } catch (Exception exception1) {      
+	       }      
+	       encode = "UTF-8";      
+	      try {      
+	          if (str.equals(new String(str.getBytes(encode), encode))) {   //判断是不是UTF-8
+	               String s2 = encode;      
+	              return s2;      
+	           }      
+	       } catch (Exception exception2) {      
+	       }      
+	       encode = "GBK";      
+	      try {      
+	          if (str.equals(new String(str.getBytes(encode), encode))) {      //判断是不是GBK
+	               String s3 = encode;      
+	              return s3;      
+	           }      
+	       } catch (Exception exception3) {      
+	       }      
+	      return "";        //如果都不是，说明输入的内容不属于常见的编码格式。
+	}
+
+	public String getCacheSqlMap(ExportMessage message) {
+		String method = message.getMethod();
+		String sql = cacheSqlMap.get(method);
+		if(sql != null) {
+			logger.error("获取缓存sql");
+			return cacheSqlMap.get(method);
+		}
+		return null;
+	}
+
+	public void setCacheSqlMap(ExportMessage message, String sql) {
+		logger.error("存储sql");
+		String method = message.getMethod();
+		this.cacheSqlMap.put(method,sql);
+	}
+	
+}

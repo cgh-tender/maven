@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="testTree" table="ums_domain_temp">
+		<id name="id" column="code" type="string">
+		  <generator class="native" /> 
+		</id>
+		<property name="name" column="display_name" type="string"/>
+		<property name="value" column="order_count" type="string"/>
+		<property name="doneCount" column="finish_count" type="string"/>
+		<property name="unDoneCount" column="unfinish_count" type="string"/>
+		<property name="processingRate" column="processingRate" type="string"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,9 @@
+# 如要增加字段请前往 com.dw.dao.IExportDao 进行编写接口[接口参数传 ExportMessage message 进行封装] com.dw.dao.impl.ExportDaoImpl 进行实现
+#测试sql
+getSqls=账期, 省份, 记录数, 空值数, 空值率, 唯一用户数, 类型
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图2 参数: dt 全国数据
+getSqlGuestcall=账期, 省份, 记录数, 记录数占比
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图3 参数: dt 全国数据
+getSqlGuestcallUserProportion=账期, 省份, 用户数, oth_party用户数, mdn_rate用户数占比, oth_party用户数占比
+#获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国异常记录数统计 图4 参数: dt 全国数据
+getSqlGuestcallAbnormalTotal=账期, 省份, mdn_oparty记录数, oparty_mdn记录数, mdn_oparty记录数占比, oparty_mdn记录数占比

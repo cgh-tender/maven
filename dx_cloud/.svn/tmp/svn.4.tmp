@@ -1,0 +1,186 @@
+package com.dw.dao.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.dw.common.FieldPublicFilter;
+import com.dw.common.base.TempJdbcDao;
+import com.dw.dao.IExportDao;
+import com.dw.model.ExportMessage;
+
+@Service("exportDao")
+public class ExportDaoImpl extends TempJdbcDao implements IExportDao {
+
+	@Override
+	public List<Map<String, Object>> test(ExportMessage message) {
+		List<Map<String, Object>> columnNames = null;
+		String sql = " select dt 账期,pro_nm ,total,null_num,null_rate,only_user,typ from fix_null_onlyuser where dt = '20190307' ";
+		columnNames = this.getColumnNames(sql);
+		return columnNames;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public HashMap<String, Object> getFieldsMap(Map<String, Object> map) {
+		HashMap<String, Object> reqFieldMap = new HashMap<String, Object>();
+		String sql = "SELECT ";
+		List<String> field = (List<String>) map.get("field");
+		String Fields = field.toString().substring(1, field.toString().length()-1);
+		sql += Fields + " FROM ";
+		String tableName = (String) map.get("tableName");
+		sql += tableName + " WHERE 1 = 1 ";
+		Map<String, String> whereMap = (Map<String, String>) map.get("where");
+		String groupString = "";
+		if (whereMap != null) {
+			for (String code : whereMap.keySet()) {
+				sql += " and " + code + " = '" + whereMap.get(code) + "'";
+				groupString += groupString == "" ? groupString : "," + groupString;
+			}
+		}
+		sql += groupString;
+		List<Map<String, String>> querylist = this.querylist(sql);
+		for (int i = 0; i < field.size(); i++) {
+			String code = field.get(i);
+			HashSet<String> requeSet = new HashSet<String>();
+			for (int j = 0; j < querylist.size(); j++) {
+				Map<String, String> map2 = querylist.get(j);
+				requeSet.add(map2.get(code));
+			}
+			reqFieldMap.put(code, new ArrayList<String>(requeSet));
+		}
+		return reqFieldMap;
+	}
+
+	@Override
+	public List<Map<String, Object>> getData(ExportMessage message, String sql) throws Exception {
+		List<Map<String, Object>> querylist = null;
+		Map<String, Object> req = message.getReq();
+		if (req.containsKey("start") && req.containsKey("limit")) {
+			int start = Integer.parseInt(req.get("start").toString());
+			int limit = Integer.parseInt(req.get("limit").toString());
+			sql = this.buildPageSqlMySql(sql, start, limit);
+		}
+		querylist = this.querylist(sql);
+		return querylist;
+	}
+	
+	@Override
+	public String getCount(ExportMessage message, String sql) throws Exception {
+		String total = "";
+		total = this.buildCountSqlMysql(sql);
+		return total;
+	}
+	
+	@Override
+	public String getSqls(ExportMessage message) throws Exception{
+		String sql = " select dt 账期,pro_nm 省份,total 记录数 ,null_num 空值数,null_rate 空值率,only_user 唯一用户数,typ 类型 from fix_null_onlyuser where dt = '20190307' ";
+		return sql;
+	}
+
+	@Override
+	public void getFieldHeadHibenate(ExportMessage message,String sql) throws Exception {
+		this.getColumnNames(sql);
+	}
+
+	@Override
+	public String getSqlGuest(ExportMessage message) throws Exception {
+		String sql = "";
+		return null;
+	}
+
+	@Override
+	public String getSqlGuestcall(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = " select " + 
+				" a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + "  省份," + 
+				" a.tb_nm 表名," + 
+				" a.total 记录数," + 
+				" round((a.total-b.total_cnt)/b.total_cnt*100,2) 记录数占比 " + 
+				" from dal_bdcsc_null a ," + 
+				" (select sum(total)/cnt total_cnt from (select a.dt ,a.pro_nm prov_id,a.total " + 
+				" from dal_bdcsc_null a " + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}' " + 
+				" and a.dt <= '${end_dts}'" + 
+				" group by a.dt,a.pro_nm)a,(select count(1) cnt from (select dt from dal_bdcsc_null where tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and dt >= '${star_dts}' " + 
+				" and dt <= '${end_dts}' group by dt ) aa )b)b" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}' " + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		return sql;
+	}
+
+	@Override
+	public String getSqlGuestcallUserProportion(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = "select a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + " 省份," + 
+				" a.tb_nm 表名," + 
+				" b.mdn_cnt 用户数," + 
+				" b.other_party_cnt  oth_party用户数," + 
+				" round(b.mdn_cnt/a.total,2) mdn_rate用户数占比," + 
+				" round(b.other_party_cnt/a.total,2) oth_party用户数占比" + 
+				" from dal_bdcsc_null a LEFT JOIN dal_acqcust_callrecord_col_cnt b" + 
+				" ON a.tb_nm=b.tb_en and a.dt=b.dt and a.pro_nm=b.prov_id" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}'" + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		
+		return sql;
+	}
+
+	@Override
+	public String getSqlGuestcallAbnormalTotal(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = "select " + 
+				" a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + " 省份," + 
+				" a.tb_nm 表名," + 
+				" b.mdn_oparty  mdn_oparty记录数," + 
+				" b.oparty_mdn  oparty_mdn记录数," + 
+				" round(b.mdn_oparty/a.total,4) mdn_oparty记录数占比," + 
+				" round(b.oparty_mdn/a.total,4) oparty_mdn记录数占比" + 
+				" from dal_bdcsc_null a LEFT JOIN dal_acqcust_callrecord_col_cnt b" + 
+				" ON a.tb_nm=b.tb_en and a.dt=b.dt and a.pro_nm=b.prov_id" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}'" + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		
+		return sql;
+	}
+
+	@Override
+	public String getSqlIDMappingIDsystem(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql=" select .* from (" + 
+				" SELECT a.dt,'全国' prov_id,sum(a.cnt2) ID累积量,sum(a.all_total) ID总量,concat(round(sum(a.cnt2)/sum(a.all_total)*100,2),'%') ID累积量占比" + 
+				" FROM " + 
+				" (SELECT a.dt,a.prov_id,sum(a.cnt1) cnt1,sum(a.cnt2) cnt2,b.all_total" + 
+				" FROM " + 
+				" bs_covered_rate a," + 
+				" (SELECT SUM(oth_zy_num)+SUM(wb_zy_num) all_total FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' AND dt=(SELECT max(dt) FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' GROUP BY tb_nm)" + 
+				" ) b WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}' group by dt,a.prov_id" + 
+				" ) a," + 
+				" (SELECT dt,prov_id,cnt1 FROM bs_user_count a WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}') b WHERE a.dt=b.dt AND a.prov_id=b.prov_id group by dt" + 
+				" union all" + 
+				" SELECT a.dt, a.prov_id,sum(a.cnt2) ID累积量,sum(a.all_total) ID总量,concat(round(sum(a.cnt2)/sum(a.all_total)*100,2),'%') ID累积量占比" + 
+				" FROM " + 
+				" (SELECT a.dt,a.prov_id,sum(a.cnt1) cnt1,sum(a.cnt2) cnt2,b.all_total" + 
+				" FROM " + 
+				" bs_covered_rate a,\n" + 
+				" (SELECT SUM(oth_zy_num)+SUM(wb_zy_num) all_total FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' AND dt=(SELECT max(dt) FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' GROUP BY tb_nm)" + 
+				" ) b WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}' group by dt,prov_id" + 
+				" ) a," + 
+				" (SELECT dt,prov_id,cnt1 FROM bs_user_count a WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}') b WHERE a.dt=b.dt AND a.prov_id=b.prov_id group by dt,prov_id" + 
+				" )a" + 
+				" where 1 = 1 ";
+		return sql;
+	}
+}

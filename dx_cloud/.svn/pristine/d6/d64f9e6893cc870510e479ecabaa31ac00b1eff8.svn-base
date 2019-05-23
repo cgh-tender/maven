@@ -1,0 +1,1196 @@
+package com.dw.web;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.openid4java.discovery.DiscoveryInformation;
+import org.openid4java.message.AuthRequest;
+import org.openid4java.message.Parameter;
+import org.openid4java.message.ParameterList;
+import org.openid4java.util.OpenID4JavaDOMParser;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.atlassian.crowd.integration.AuthenticationState;
+import com.atlassian.crowd.integration.http.CrowdHttpAuthenticator;
+import com.atlassian.crowd.integration.http.filter.CrowdSecurityFilter;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.dw.common.AdminSession;
+import com.dw.common.AdminSessionUtil;
+import com.dw.common.StringUtil;
+import com.dw.interceptor.MySessionContext;
+import com.dw.model.Menu;
+import com.dw.model.Organization;
+import com.dw.model.RegistrationModel;
+import com.dw.model.ResultMessage;
+import com.dw.model.ResultMessage2;
+import com.dw.model.ResultMessage4;
+import com.dw.model.Role;
+import com.dw.model.SynUser;
+import com.dw.model.User;
+import com.dw.servce.IOrgService;
+import com.dw.servce.IRoleService;
+import com.dw.servce.IUserService;
+import com.dw.util.BaseTreeGrid;
+import com.dw.util.HttpRequest;
+import com.dw.util.PasswordUtil;
+import com.dw.util.RopUtils;
+import com.dw.util.UUIDUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
+
+@Controller  
+public class UsersConstroller {
+	
+	private final static String DISCOVERY_INFORMATION="discovery-information";
+	
+	@Autowired
+	IUserService userService ;
+	@Autowired
+	IOrgService orgService;
+	@Autowired
+	IRoleService roleService;
+	
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/userlogin/interlogin",produces="text/html;charset=UTF-8")
+    public void getLoginInterUser(HttpServletRequest request,HttpServletResponse response)   {
+    	 Gson json=new Gson(); 
+     	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			Map<String,String> map = new HashMap<String,String>();
+    	    map.put("msg", "请重新登录！");
+    		map.put("code", "2");
+    		 out.print(json.toJson(map));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	/**
+	 * 效验登录接口
+	 * @param request
+	 * @param response
+	 */
+	@ResponseBody
+    @RequestMapping(value = "/userlogin/checklogin",produces="text/html;charset=UTF-8")
+    public void getCheckLogin(HttpServletRequest request,HttpServletResponse response)   {
+    	 Gson json=new Gson(); 
+     	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			ResultMessage4 result = new ResultMessage4();
+  			AdminSession  sessionuser = getUserSessionUtil.getUserSession(request);// 通过session取值
+  			
+   			 if(null == sessionuser || "".equals(sessionuser)){
+ 				 String loginname = request.getParameter("loginname"); 
+ 	  			 MySessionContext myc= MySessionContext.getInstance();  
+ 		         HttpSession sess = myc.getSession(loginname);  
+ 	 	         sessionuser = ((AdminSession)sess.getAttribute("UserSession"));
+ 	 	         System.out.println("天源迪科进入checklogin------");
+ 			 } 
+   			List<Map<String,String>> userresult = userService.getUsers(sessionuser.getLoginName(), null);
+ 			User user = new User();
+			user.setLoginName(userresult.get(0).get("login_name")+"");
+			user.setUsername(userresult.get(0).get("user_name")+"");
+			user.setStyle_flag(userresult.get(0).get("style_flag")+"");
+			System.out.println((String)userresult.get(0).get("strid"));
+			user.setId(Integer.parseInt(userresult.get(0).get("strid")));
+			
+			String orgId = userresult.get(0).get("organization_id")+"";
+  			Organization org = new Organization();
+			org.setOrgId(orgId);
+			List<Map<String,String>> orgresult =  orgService.getOrgList(org);
+			
+ 			Organization neworg = new Organization();
+			neworg.setOrgName(orgresult.get(0).get("org_name")+"");
+			neworg.setId(-1);
+			
+			String role_id = userresult.get(0).get("role_id")+"";
+			Role role = new Role();
+			role.setRole_id(role_id);
+			List<Role> roleresult = roleService.getRoleList(role);
+			Role newRole = new Role();
+			
+			String newRoleName = roleresult.get(0).getRole_name();
+			String newRoleDesc = roleresult.get(0).getRole_desc();
+			
+			newRole.setId(-1);
+			newRole.setRole_name(newRoleName);
+			newRole.setRole_desc(newRoleDesc);
+ 			
+ 			user.setRole(newRole);
+			user.setOrg(neworg);
+ 			result.setCode("1");
+			result.setMsg("登录状态，生效！");
+			result.setUser(user);
+			/*Map<String,String> map = new HashMap<String,String>();
+		    map.put("msg", "登录状态，生效！");
+		    map.put("code", "1");*/
+     		out.print(json.toJson(result));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	/**
+	 *企业门户用户是否已登录验证 
+	 * @param request
+	 * @param response
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/userlogin/qymhoutlogin",produces="text/html;charset=UTF-8")
+    public void getQymhOutLogin(HttpServletRequest request,HttpServletResponse response,@RequestParam("sessionid") String sessionid)   {
+	         System.out.println(sessionid);
+	         boolean flag = false;
+	         
+			 if (flag) {
+				 System.out.println("注销成功:注销用户："+sessionid);
+			}else{
+				 System.out.println("注销失败:注销用户："+sessionid);
+			}
+			
+    }
+	
+	
+	/**
+	 *用户注销接口
+	 * @param request
+	 * @param response
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/userlogin/outlogin",produces="text/html;charset=UTF-8")
+    public void getOutLogin(HttpServletRequest request,HttpServletResponse response)   {
+    	 Gson json=new Gson(); 
+    	
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			 Map<String,String> map = new HashMap<String,String>();
+			/* Enumeration<String> e = request.getHeaders("Cookie");
+	         String logname ="";
+	         String[] logns;
+	         while(e.hasMoreElements()){
+	        	String logname2 = (String) e.nextElement();
+	        	if (!"".equals(logname2)) {
+					logns = logname2.split(";");
+					for (int i = 0; i < logns.length; i++) {
+						String logname1=logns[i].substring(0,logns[i].indexOf("="));
+						if (!"JSESSIONID".equals(logname1)) {
+							logname=logname1.trim();
+						}
+					}
+				}
+	         }*/
+	        // System.out.println(logname);
+	         boolean flag = false;
+ 	         try{
+	 	         request.getSession().removeAttribute("UserSession");
+	 	         flag=true;
+	         }catch (Exception e1){
+	        	 e1.printStackTrace();
+	         }
+ 			 if (flag) {
+				 map.put("msg", "注销，成功！");
+			     map.put("code", "1");
+			}else{
+				 map.put("msg", "注销，失败！");
+			     map.put("code", "2");
+			}
+			
+    		 out.print(json.toJson(map));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	
+	
+	/**
+	 * 用户登录
+	 * @param logname
+	 * @param request
+	 * @param response
+	 * @param password
+	 */
+	@SuppressWarnings("unused")
+	@ResponseBody
+    @RequestMapping(value = "/userlogin/{logname}",produces="text/html;charset=UTF-8")
+    public void getLoginUser(@PathVariable String logname, HttpServletRequest request
+    		,HttpServletResponse response,@RequestParam("password") String password)   {
+    	 Gson json=new Gson(); 
+    	Map<String,String> map = new HashMap<String,String>();
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+	    	 if(password != null && !"".equals(password) && !"qwert".equals(password)){
+	    		 String pastr = PasswordUtil.getMD5String(password);
+ 	        	 List<Map<String,String>> ll = userService.getUsers(logname,pastr);
+	        	 if(ll != null && ll.size()>0){
+		    		 /*logname = PasswordUtil.getMD5String(logname);
+	        		 Cookie cookie = new Cookie(logname,pastr);
+	        		 cookie.setMaxAge(1800);
+	        		 cookie.setPath("/");
+	        		 response.addCookie(cookie);*/
+	        		 map.put("msg", "登录成功");
+	        		 map.put("code", "1");
+ 	        		 AdminSession operSession = new AdminSession();
+	        		 String roleId = ll.get(0).get("role_id");
+	        		 operSession.setLoginName(logname);
+	        		 operSession.setPassword(pastr);
+	        		 operSession.setRole(roleId);
+	        		 System.out.println("operSession登录名："+operSession.getLoginName()+"operSession密码："+operSession.getPassword()+"operSession角色Id："+operSession.getRole());
+      	        	 request.getSession().setAttribute("UserSession",operSession);
+       	        	 
+      	        	 Cookie cookie = new Cookie("JSESSIONID",request.getSession().getId());
+	        		 cookie.setMaxAge(86400);
+	        		 cookie.setPath("/");
+	        		 response.addCookie(cookie);
+	        		 map.put("msg", "登录成功");
+	        		 map.put("code", "1");
+     	        	 
+    	        	 MySessionContext myc= MySessionContext.getInstance();  
+    	        	 myc.addSession(request.getSession()); 
+     	        	 
+	        	 }else{
+	        		 map.put("msg","登录失败，用户或密码错误！");
+	        		 map.put("code", "0");
+	        	 }
+	    	 }else if("qwert".equals(password)){
+	    		 logname = PasswordUtil.getMD5String(logname);
+	    		 Cookie cookie = new Cookie(logname,"qwert");
+        		 cookie.setMaxAge(86400);
+        		 cookie.setPath("/"); 
+        		 response.addCookie(cookie);
+         		 map.put("msg", "登录成功");
+        		 map.put("code", "1");
+        		 System.out.println("门户登陆"+logname);
+        	 }else{
+	    		 map.put("msg","密码不能为空，请输入密码！");
+        		 map.put("code", "0");
+	    	 }
+    		 out.print(json.toJson(map));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	/**
+	 * 用户列表
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/usermanagement/userlist",produces="text/html;charset=UTF-8")
+    public void getUserList(HttpServletRequest request,HttpServletResponse response,@RequestParam("orgid") String organizationid,@RequestParam("orglevel") String org_level)   {
+    	 Gson json=new Gson(); 
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			 User user;
+			//获取当前部门下所有子级组织机构
+			Organization org = new Organization();
+			List<Map<String, String>> orglist;
+			Map<String,List<Map<String,String>>> mapstr = new HashMap<String, List<Map<String,String>>>();
+			if (!"".equals(organizationid) && !StringUtil.isEmpty(organizationid)) {
+				
+				if (org_level.equals("1")) {
+					org.setOrgId(organizationid);
+					orglist = orgService.getOrgTreeList(org);
+					if (orglist != null && orglist.size() > 0) {
+						//根据组织机构id获取所有用户
+						for (Map<String, String> map : orglist) {
+							user = new User();
+							user.setOrganizationId(map.get("org_id"));
+							List<Map<String,String>> userlist = userService.getUserList(user);
+							if (userlist != null && userlist.size() > 0) {
+								mapstr.put(map.get("org_name"), userlist);
+							}
+						}
+					}
+					out.print(json.toJson(mapstr));
+				}else {
+					user = new User();
+					user.setOrganizationId(organizationid);
+					List<Map<String,String>> userlist = userService.getUserList(user);
+					out.print(json.toJson(userlist));
+				}
+			}else {
+				//查询所有用户
+				Map<String,Map<String,List<Map<String,String>>>> mapstr1 = new HashMap<String,Map<String,List<Map<String,String>>>>();
+				List<Map<String,Map<String,List<Map<String,String>>>>> list1 = new ArrayList<Map<String,Map<String,List<Map<String,String>>>>>();
+				Organization org1 = new Organization();
+				org1.setOrgLevel("1");
+				orglist = orgService.getOrgList(org1);
+				if (orglist != null && orglist.size() > 0) {
+					for (Map<String, String> map : orglist) {
+						//获取当前部门下所有子级组织机构
+						org.setOrgId(map.get("org_id"));
+						List<Map<String,String>> orglist1 = orgService.getOrgTreeList(org);
+						if (orglist1 != null && orglist1.size() > 0) {
+						//根据组织机构id获取所有用户
+						 mapstr = new HashMap<String, List<Map<String,String>>>();
+							 for (Map<String, String> map1 : orglist1) {
+									user = new User();
+									user.setOrganizationId(map1.get("org_id"));
+									List<Map<String,String>> userlist = userService.getUserList(user);
+									if (userlist != null && userlist.size() > 0) {
+										mapstr.put(map1.get("org_name"), userlist);
+									}
+								}
+					}
+					if (mapstr != null && !mapstr.isEmpty()) {
+						 mapstr1.put(map.get("org_name"), mapstr);
+					}
+				  }
+					out.print(json.toJson(mapstr1));
+				}
+			}
+				
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	/**
+	 * 用户添加／修改
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/usermanagement/userUpOrSave",produces="text/html;charset=UTF-8")
+    public void saveOrUpdatUser(HttpServletRequest request,HttpServletResponse response,@RequestParam("userEntity") String userEntity)   {
+    	 Gson json=new Gson(); 
+    	 boolean jsonP = false;
+    	 User user = new User();
+		 Map<String,String> map = new HashMap<String,String>();
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			try {
+				 if (!"".equals(userEntity+"")) {
+					 	SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					 	JSONObject jsons = new JSONObject(userEntity);
+						//JSONObject jsons = new JSONObject("{\"login_name\":\"llt\",\"user_name\":\"l\",\"role_id\":\"00000\",\"id\":68,\"organization_id\":\"13293021235\",\"phone\":\"13293021235\",\"login_name\":\"lulutong\"}");
+					 	//user.setLoginName(jsons.getString("login_name"));
+					/*	if (!"".equals(jsons.getString("pass_show")+"") && jsons.getString("pass_show") != null) {
+							String pastr = PasswordUtil.getMD5String(jsons.getString("pass_show")+"");
+							user.setPassword(pastr);
+							user.setPassShow(jsons.getString("pass_show")+"");
+						}*/
+						//String fval=new String(jsons.getString("user_name").getBytes("iso8859-1"),"UTF-8");
+						//String fval= jsons.getString("user_name") ;
+						//user.setUsername(fval);
+						//user.setPhone(jsons.getString("phone"+""));
+						//user.setEmail(jsons.getString("email")+"");
+						//user.setRoleId(jsons.getString("role_id")+"");
+						//user.setOrganizationId(jsons.getString("organization_id")+"");
+						String userId =  Calendar.getInstance().getTimeInMillis()+"";
+					    //判断如果id不为0说明为修改 否则 新增
+						 if (jsons.getInt("id")==0) {
+							//查询用户名是否存在
+							/* User  user1 = new User();
+							 user1.setLoginName(jsons.getString("login_name"));
+							List<Map<String,String>> ulist=userService.getUserList(user1);
+							if (ulist != null && ulist.size() > 0) {
+								map.put("msg", "添加失败！用户名已存在！");
+							    map.put("code", "2");
+							    out.print(json.toJson(map));
+							   return;
+							}
+							//user.setUserId(userId);
+ 							user.setCreateTime(sdf.format(new Date()));
+ 							boolean flage= userService.saveOrUpdateUser(user);
+							if(flage){
+								user1 = new User();
+								user1.setUserId(user.getUserId());
+								ulist = userService.getUserList(user1);
+								Map<String,String> map1 = ulist.get(0);
+								ObjectMapper mapper = new ObjectMapper();  
+								String json1 =mapper.writeValueAsString(map1);
+								JSONObject jsStr = new JSONObject(json1);
+				        		 map.put("code", "1");
+				        		 map.put("id",jsStr.getString("id") );
+				        		// map.put("user_id", jsStr.getString("user_id"));
+							}else {
+								 map.put("code", "2");
+								 map.put("msg", "用户添加成功"); 
+							}*/
+							 map.put("code", "2");
+							 map.put("msg", "用户添加功能已停用"); 
+ 						}else{
+							User user1 = new User();
+							user1.setId(jsons.getInt("id"));
+							List<Map<String,String>> ulist=userService.getUserList(user1);
+							if (ulist == null || ulist.size() <= 0 ) {
+								map.put("msg", "修改失败！该用户不存在！");
+							    map.put("code", "2");
+							    out.print(json.toJson(map));
+							    return;
+							}
+							user = new User();
+ 							user.setUpdateTime(sdf.format(new Date()));
+ 							user.setId(jsons.getInt("id"));
+ 							
+ 							if(jsons.has("style_flag")){
+ 	 							user.setStyle_flag(jsons.getString("style_flag"));
+  							}
+ 							if(jsons.has("role_id")){
+ 	 							user.setRoleId(jsons.getString("role_id"));
+  							}
+ 							
+  							//user.setUserId(ulist.get(0).get("user_id")+"");
+							int falg = userService.updateUserRole(user);
+ 							if(falg == 1){
+ 								map.put("msg", "修改成功！");
+ 								map.put("code", "1");
+							}else{
+								map.put("msg", "修改失败！");
+ 								map.put("code", "2");
+							}
+ 						}
+					 }
+				 
+			} catch (Exception e) {
+				 map.put("code", "0");
+				 map.put("msg", "操作失败！"); 
+				e.printStackTrace();
+			}
+			 out.print(json.toJson(map));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+	    	 
+		}  catch (Exception e) { 
+			e.printStackTrace();
+		}
+    }
+	/**
+	 *删除用户
+	 */
+	/*@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/usermanagement/delUsers",produces="text/html;charset=UTF-8")
+    public void delUsers(HttpServletRequest request,HttpServletResponse response,@RequestParam("ids") String ids)   {
+    	 Gson json=new Gson(); 
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			 Map<String,String> map = new HashMap<String,String>();
+			 if (!"".equals(ids) && ids.length() > 0) {
+				try {
+					//ids需要以逗号分割
+					userService.delUser(ids);
+					 map.put("code", "1");
+					 map.put("msg", "删除成功！"); 
+				} catch (Exception e) {
+					 map.put("code", "0");
+					 map.put("msg", "删除失败！"); 
+				}
+			}else {
+				 map.put("code", "0");
+				 map.put("msg", "删除失败！"); 
+			}
+    		 out.print(json.toJson(map));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }*/
+	
+	
+	/**
+	 * 
+	 * 登录请求列表
+	 * 
+	 */
+	
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/menumanagement/menutreelist",produces="text/html;charset=UTF-8")
+    public void getMenuTreeList(HttpServletRequest request,HttpServletResponse response,@RequestParam("userid") String userid,@RequestParam("menulevel") String menulevel)   {
+    	 Gson json=new Gson(); 
+    	 boolean jsonP = false;
+    	 Map<String,String> map = new HashMap<String,String>();
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+    	 String menuParentId=null;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			 
+			 if(!menulevel.equals("") && menulevel !=null ){
+				 
+ 			 }else{
+ 				menulevel = "1";
+ 				menuParentId="-1";
+ 			}
+ 			 List<BaseTreeGrid> rlists=this.getMenuList(userid,menulevel,menuParentId);
+ 			 System.out.println(rlists.toString());
+ 			if(rlists.size() > 0){
+				 out.print(json.toJson(rlists));				 
+				 map.put("code", "1");
+				 map.put("msg", "该用户菜单查询成功！");
+			 }else{
+				 map.put("code", "0");
+				 map.put("msg", "该用户菜单查询失败！"); 
+				 out.print(json.toJson(map));				 
+			 }
+ 			 
+ 			 
+     		 out.print(json.toJson(rlists));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	
+	
+	
+	// 菜单查询的封装
+	
+		public  List<BaseTreeGrid> getMenuList(String userid,String menulevel, String menuParentId){
+    	    User user = new User();
+			user.setUserId(userid);
+			Menu menu = new Menu();
+			menu.setMenuLevel(menulevel);
+			menu.setMenuIdParent(menuParentId);
+  	 		List<BaseTreeGrid> resultlist=new ArrayList<BaseTreeGrid>();
+			List<Map<String,String>> userMenuListlist = userService.getMenuTreeList(user, menu);
+			menulevel =String.valueOf(Integer.valueOf(menulevel) + 1);//下级菜单级别
+ 			menu.setMenuLevel(menulevel);
+ 	 		for(Map<String,String> map : userMenuListlist){
+				BaseTreeGrid tree = new BaseTreeGrid();
+	 			tree.setId(map.get("menu_id"));
+				tree.setName(map.get("menu_name"));
+				tree.setNoede_desc(map.get("menu_name"));
+				tree.setULR(map.get("menu_url"));
+				String url=map.get("menu_url");
+				if(url== "" || url == null){	
+					tree.setExpanded(false);
+				}else{
+					tree.setExpanded(true);
+				}
+				tree.setLevel(map.get("menu_level"));
+				tree.setParentId(map.get("menu_id_parent"));
+				menu.setMenuIdParent(map.get("menu_id"));
+				if(map.get("menu_id").equals("18030000")){
+					System.out.println(2); 
+				}
+				 //下级菜单
+				List<Map<String,String>> roleMenuListcrlist = userService.getMenuTreeList(user, menu);;
+				if(roleMenuListcrlist.size() > 0){
+  					tree.setChildren(getMenuList(userid,menulevel,map.get("menu_id")));
+				}
+				resultlist.add(tree);
+	 		}
+	 		return resultlist;
+		}
+	
+	
+	
+	
+	
+	/**
+	 * 用户详情
+	 * 
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/usermanagement/userDetails",produces="text/html;charset=UTF-8")
+    public void getUserDetails(HttpServletRequest request,HttpServletResponse response,@RequestParam("userid") String userid)   {
+    	 Gson json=new Gson(); 
+    	 boolean jsonP = false;
+    	 Map<String,String> map = new HashMap<String,String>();
+    	 String cb = request.getParameter("audit");
+    	 User user=new User();
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+			user.setUserId(user.getUserId());
+			List<Map<String,String>>  ulist = userService.getUserList(user);
+			Map<String,String> map1 = ulist.get(0);
+			ObjectMapper mapper = new ObjectMapper();  
+			String json1 =mapper.writeValueAsString(map1);
+			JSONObject jsStr = new JSONObject(json1);
+    		 map.put("code", "1");
+    		 map.put("id", jsStr.getString("id"));
+    		 map.put("password", jsStr.getString("pass_show"));
+    		 map.put("org_name", jsStr.getString("org_name"));
+    		 map.put("user_name", jsStr.getString("user_name"));
+    		 map.put("phone", jsStr.getString("phone"));
+    		 map.put("pass_show", jsStr.getString("pass_show"));
+    		 map.put("role_id", jsStr.getString("role_id"));
+    		 map.put("email", jsStr.getString("email"));
+    		 map.put("organization_id", jsStr.getString("organization_id"));
+    		 map.put("login_name", jsStr.getString("login_name"));
+    		 map.put("user_id", jsStr.getString("user_id"));
+    		 map.put("role_name", jsStr.getString("role_name"));
+    		 out.print(json.toJson(map));
+ 	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	
+	/**
+	 * 与经管平台同步用户信息接口
+	 * 
+	 */
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@ResponseBody
+ 	@RequestMapping(value="/receive/sysUser",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+	public void receiveSynUser(HttpServletRequest request, HttpServletResponse response,@RequestBody SynUser synUser){
+		 response.setContentType("application/x-json");
+ 		 PrintWriter out = null ;
+    	 Gson json=new Gson(); 
+  		 String synStatus = "0"; // 同步状态码
+ 	 	 String synMsg = "成功"; // 同步状态信息
+ 	 	 String secret = "631a35adc7f64dd6ac8deeec93efee5f";// 秘钥
+ 	 	 String appname = "jgptTojhxt";// 接口调用平台名称
+  	 	 
+ 	 	 Map result = new HashMap();
+ 		 try {
+ 			 out = response.getWriter();
+  			 //result = "{synStatus:'%s',synMsg:'%s'}", // 格式化输出
+  			 if (StringUtils.isBlank(synUser.getSign())) {
+ 				synStatus = "1";
+ 				synMsg = "同步失败:签名为空";
+ 				result.put("synStatus", synStatus);
+ 				result.put("synMsg", synMsg);
+ 				out.print(json.toJson(result));
+   			}else{
+ 				Map<String, String> map = new HashMap<String, String>();
+ 				
+ 				appname = getProperties("config.properties", "appname");
+ 				secret =  getProperties("config.properties", "secret");
+ 				
+ 	 			map.put("app", appname);
+ 	 			String sign = RopUtils.sign(map, secret);
+  	 			if (!sign.equals(synUser.getSign())) {
+ 	 				synStatus = "1";
+ 	 				synMsg = "同步失败:签名不匹配";
+ 	 				result.put("synStatus", synStatus);
+ 	 				result.put("synMsg", synMsg);
+ 	 				out.print(json.toJson(result));
+ 	 			} else{
+ 	 			    // 数据转换和持久化代码 业务逻辑
+ 	 			 	SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+ 	 	 			User user = new User();
+  	 	 			user.setUserId(synUser.getNumber()+"");
+ 	 				user.setLoginName(synUser.getAccount()+"");
+  	 				user.setPassShow("");
+ 	 				user.setPassword("");
+ 	 				user.setUsername(synUser.getNickname()+"");
+ 	 				user.setPhone(synUser.getMobile()+"");
+ 	 				user.setEmail(synUser.getEmail()+"");
+ 	 				user.setRoleId(getRoleIdByOrgCode(synUser.getOrgCode()+""));
+ 	 				user.setOrganizationId(synUser.getOrgCode()+"");
+ 	 				user.setCreateTime(sdf.format(new Date()));
+ 	 				user.setUpdateTime(sdf.format(new Date()));
+ 	 				user.setStyle_flag("");
+ 	 				user.setRegionId(null != synUser.getRegionId() ?synUser.getRegionId():-1);
+ 	 				user.setOrgName(synUser.getOrgName()+"");
+ 	 				user.setJob(synUser.getJob()+"");
+ 	 				user.setUnit(synUser.getUnit()+"");
+ 	 				user.setTelephone(synUser.getTelephone()+"");
+ 	 				user.setSex(null != synUser.getSex() ?synUser.getSex():-1);
+ 	 				user.setEmploymentNature( null != synUser.getEmploymentNature()?synUser.getEmploymentNature():-1);
+ 	 				
+ 	 				List<Map<String,String>> checkUserExist = userService.getUsers(user.getLoginName(),"");
+ 	 				if(checkUserExist.size() > 0 ){
+ 	 					userService.updateUser(user);
+ 	 				}else{
+ 	 					userService.saveOrUpdateUser(user); 
+ 	 				}
+  	 	 			result.put("synStatus", synStatus);
+ 	 				result.put("synMsg", synMsg);
+ 	 				out.print(json.toJson(result));
+ 	 			}
+ 			}//else
+ 		} catch (Exception e) {
+ 			try {
+				out = response.getWriter();
+			} catch (IOException e1) {
+ 				e1.printStackTrace();
+			}
+ 			synStatus = "-1";
+			synMsg = "同步失败:系统异常";
+			result.put("synStatus", synStatus);
+			result.put("synMsg", synMsg);
+			out.print(json.toJson(result));
+ 			e.printStackTrace();
+ 		}
+ 		
+  		//return String.format(result, synStatus, synMsg);
+	}
+
+	
+	
+	// 通过部门CODE获得所属角色
+ 	public String getRoleIdByOrgCode(String orgcode){
+ 		Organization org = new Organization();
+		org.setOrgId(orgcode);
+ 		List<Map<String,String>> result = orgService.getOrgList(org);
+		if(null == result || result.size() == 0){
+			return "";
+		}else{
+			Map<String,String> orgmap = result.get(0);
+			String role_id = orgmap.get("role_id")+"";
+			return role_id;
+		}
+ 	}
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * crowd 通过账号密码登录
+	 * 
+	 */
+ 	@ResponseBody
+    @RequestMapping(value = "/crowdSso/{logname}",produces="text/html;charset=UTF-8")
+    public void CrowdLogin(@PathVariable String logname, HttpServletRequest request
+     		,HttpServletResponse response,@RequestParam("password") String password)   {
+		String username=logname;
+  		request.setAttribute("username", username);
+ 		request.setAttribute("password", password);
+  		 
+     	Gson json=new Gson(); 
+    	Map<String,String> map = new HashMap<String,String>();
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+ 			ResultMessage result = new ResultMessage();
+ 			result.setCode("2");
+            result.setMsg("认证失败");
+  			try{
+  				ServletContext context = request.getServletContext();
+ 				WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
+ 				CrowdHttpAuthenticator crowdHttpAuthenticator = (CrowdHttpAuthenticator)ctx.getBean("crowdHttpAuthenticator");//获得crowdHttpAuthenticator
+ 				//CrowdClient crowdClient = (CrowdClient)ctx.getBean("crowdClient");//获得crowdClient,暂时没用
+ 				//com.atlassian.crowd.model.user.User clientuser = crowdClient.getUser(username);
+ 				
+ 				//System.out.println("clientuser====="+clientuser);
+ 				
+  				//Boolean authresult = validateLoggedUser(request,response,crowdHttpAuthenticator);//验证是否已登录request，response
+ 				//com.atlassian.crowd.model.user.User crowdUser = crowdHttpAuthenticator.getUser(request);
+   	           /* if (authresult){ // 如果已登录成功
+  					 String loginName = crowdUser.getName();
+   	                 result.setCode("1");
+    	             result.setMsg("认证通过");
+    	             System.out.println("Crowd中已登录情况---");
+       	        	 List<Map<String,String>> ll = userService.getUsers(loginName,"");
+    	        	 if(ll != null && ll.size()>0){
+      	        		 AdminSession operSession = new AdminSession();
+    	        		 String roleId = ll.get(0).get("role_id");
+    	        		 operSession.setLoginName(loginName);
+     	        		 operSession.setRole(roleId);
+          	        	 request.getSession().setAttribute("UserSession",operSession);
+           	        	 Cookie cookie = new Cookie("JSESSIONID",request.getSession().getId());
+    	        		 cookie.setMaxAge(-1);
+    	        		 cookie.setPath("/");
+    	        		 response.addCookie(cookie);
+          	        	 MySessionContext myc= MySessionContext.getInstance();  
+        	        	 myc.addSession(request.getSession()); 
+    	        	 }
+     	         }else{// 如果不通过 1：判断账号密码，2：账号密码不存在*/   
+    	             if( null !=username && !"".equals(username) && null !=password ){
+     	            	  try{
+//     	            		  20181213 陈国海 进行修改 
+//     	            		  if("admin".equals(username)){
+     	            		  if("dsdod_123".equals(username)) {
+     	            			  
+      	            			 String pastr = PasswordUtil.getMD5String(password);
+     	        	        	 List<Map<String,String>> ll = userService.getUsers(logname,pastr);
+	     	       	        	 if(ll != null && ll.size()>0){
+ 	     	        	             AdminSession operSession = new AdminSession();
+	     	       	        		 String roleId = ll.get(0).get("role_id");
+	     	       	        		 operSession.setLoginName(logname);
+	     	       	        		 operSession.setPassword(pastr);
+	     	       	        		 operSession.setRole(roleId);
+	     	       	        		 System.out.println("operSession登录名："+operSession.getLoginName()+"operSession密码："+operSession.getPassword()+"operSession角色Id："+operSession.getRole());
+	     	             	         request.getSession().setAttribute("UserSession",operSession);
+ 	     	             	         Cookie cookie = new Cookie("JSESSIONID",request.getSession().getId());
+	     	       	        		 cookie.setMaxAge(86400);
+	     	       	        		 cookie.setPath("/");
+	     	       	        		 response.addCookie(cookie);
+ 	     	           	        	 MySessionContext myc= MySessionContext.getInstance();  
+	     	           	        	 myc.addSession(request.getSession()); 
+	     	           	        	 result.setCode("1");
+	     	           	        	 result.setMsg("认证通过");
+	     	            	        	 
+	     	       	        	 }else{
+	     	       	        		 result.setCode("2");
+	     	       	        		 result.setMsg("认证失败");
+	     	       	        	 }
+      	            		  }else{
+      	            			  System.out.println(username+"进行登录----");
+       	            			  crowdHttpAuthenticator.authenticate(request,response, username, password);//注册到crowd
+      	            			  System.out.println(username+"登录结束----");
+      	            			  
+      	            			  System.out.println("crowdHttpAuthenticator.isAuthenticated=="+crowdHttpAuthenticator.isAuthenticated(request, response));
+      	            			  
+                	            	  if(crowdHttpAuthenticator.isAuthenticated(request, response)){
+                	            		  System.out.println("进行数据库中验证----");
+ 	                  	                List<Map<String,String>> ll = userService.getUsers(username,"");
+	                   	        	    if(ll != null && ll.size()>0){
+	                	            		 System.out.println("进行数据库中验证后----");
+ 	        	             	        	 AdminSession operSession = new AdminSession();
+	       	            	        		 String roleId = ll.get(0).get("role_id");
+	       	            	        		 operSession.setLoginName(username);
+	       	             	        		 operSession.setRole(roleId);
+	       	                  	        	 request.getSession().setAttribute("UserSession",operSession);
+	       	                   	        	 Cookie cookie = new Cookie("JSESSIONID",request.getSession().getId());
+	       	            	        		 cookie.setMaxAge(86400);
+	       	            	        		 cookie.setPath("/");
+	       	            	        		 response.addCookie(cookie);
+	        	                 	         MySessionContext myc= MySessionContext.getInstance();  
+	       	                	        	 myc.addSession(request.getSession()); 
+	       	                	        	 result.setCode("1");
+	       	                 	             result.setMsg("认证通过");
+	                   	        	  }else{
+	                   	        		 System.out.println("认证失败-1"); 
+	                   	        		 result.setCode("2");
+	   	                 	             result.setMsg("认证失败");
+	                   	        	  }
+              	            	 }else{
+                   	        		 System.out.println("认证失败-2"); 
+                    	        		 result.setCode("2");
+   	                 	             result.setMsg("认证失败");
+                   	        	  }
+     	            		  }
+             	            }catch(Exception e){
+              	        		System.out.println("认证失败-3"); 
+             	            	result.setCode("2");
+          	            		result.setMsg("认证失败");
+          	            		e.printStackTrace();
+            	            }
+      	             }else{
+      	            	 System.out.println("认证失败-4"); 
+    	            	 result.setCode("2");
+        	             result.setMsg("认证失败");
+    	             }
+   	             //} 是否已登录屏蔽
+			}catch(Exception e){
+	             System.out.println("认证失败-5"); 
+ 				 result.setCode("2");
+	             result.setMsg("认证失败");
+			}
+      		 out.print(json.toJson(result));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	
+	
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/crowdSsoOpenId/userlogin",produces="text/html;charset=UTF-8")
+    public void CrowdSsoOpenIdLogin(HttpServletRequest request,HttpServletResponse response,
+    		@RequestParam(value="OpenID") String OpenID )   {
+  		Gson json=new Gson(); 
+    	Map<String,String> map = new HashMap<String,String>();
+    	 boolean jsonP = false;
+    	 String cb = request.getParameter("audit");
+    	 if (cb != null) {
+    	     jsonP = true;
+    	     response.setContentType("text/javascript");
+    	 } else {
+    	     response.setContentType("application/x-json");
+    	 }
+    	 PrintWriter out;
+		try {
+			out = response.getWriter();
+			if (jsonP) {
+	    	     out.write(cb + "(");
+	    	 }
+ 			ResultMessage result = new ResultMessage();
+    		try{
+    			if(null != OpenID ){
+        			String deopenId = java.net.URLDecoder.decode(OpenID,"UTF-8");
+      		 		String returnUrl =  getProperties("config.properties", "returnToUrl");
+ 					RegistrationService.setReturnToUrl(returnUrl);
+    		  		DiscoveryInformation discoveryInformation = RegistrationService
+   							.performDiscoveryOnUserSuppliedIdentifier(deopenId);
+    		 		AuthRequest authRequest = RegistrationService.createOpenIdAuthRequest(discoveryInformation, returnUrl);
+    		 			result.setCode("1");
+   		 			result.setMsg(authRequest.getDestinationUrl(true));
+      			}else{
+    				result.setCode("2");
+    				result.setMsg("验证失败，openid为空");
+    			}
+			}catch(Exception e){
+				 e.printStackTrace();
+				 result.setCode("2");
+	             result.setMsg("验证失败");
+			}
+      		 out.print(json.toJson(result));
+	    	 if (jsonP) {
+	    	     out.write(");");
+	    	 }
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	 
+    
+  	
+	
+	private boolean validateLoggedUser(HttpServletRequest request,HttpServletResponse response,
+			CrowdHttpAuthenticator crowdHttpAuthenticator){
+		Boolean authenticated = false;
+		try {
+   			AuthenticationState austatus = crowdHttpAuthenticator.checkAuthenticated(request, response);
+    	    return austatus.isAuthenticated();
+   		} catch (Exception e) {
+			e.printStackTrace();
+		}  
+  		return authenticated;
+	}
+	
+
+	
+	
+	
+	
+	
+	/**
+	 *  
+	 * 验证页返回的请求
+	 * 
+	 */
+	@ResponseBody
+    @RequestMapping(method = RequestMethod.GET,value = "/crowdSsoOpenId/crowdReturn",produces="text/html;charset=UTF-8")
+    public void catchTest(HttpServletRequest request,HttpServletResponse response  ) throws Exception {
+ 			ResultMessage result = new ResultMessage();
+ 		     response.setContentType("application/x-json");
+ 		    Gson json=new Gson(); 
+  	    	 PrintWriter out  = response.getWriter();;
+   			try{
+ 				ParameterList params = new ParameterList(request.getParameterMap());  
+  				String opendid = "";
+ 				String querystr = request.getQueryString();
+ 				String []querys = querystr.split("&");
+				if(querys.length > 0 ){
+					for(int i=0;i<querys.length;i++){
+						if(querys[i].startsWith("openid.claimed_id")){
+							String []claimedid = querys[i].split("=");
+							opendid = claimedid[1];
+							break;
+						}
+					}
+ 			    opendid = java.net.URLDecoder.decode(opendid,"UTF-8");		
+				
+			    // 由于每次session会变，无法取到discoveryInformation，需要重新获取一次，不知道合适不
+				DiscoveryInformation discoveryInformation = RegistrationService
+								.performDiscoveryOnUserSuppliedIdentifier(opendid);
+  			        
+					// returnToUrl=http://111.235.158.226:8250/newAudit/loading2.html
+			        String returnUrl  =  getProperties("config.properties", "returnToUrl");
+ 			        StringBuffer receivingURL=new StringBuffer(returnUrl) ;  
+ 			     
+			        RegistrationModel model = RegistrationService.processReturn(discoveryInformation, 
+				        		receivingURL.toString(),params );
+ 			        if(null != model){
+ 			        	String username = new String();
+ 			        	username = opendid.substring(opendid.lastIndexOf('/')+1, opendid.length());
+  			        	 List<Map<String,String>> ll = userService.getUsers(username,"");
+	       	        	  if(ll != null && ll.size()>0){
+	             	        	 AdminSession operSession = new AdminSession();
+	           	        		 String roleId = ll.get(0).get("role_id");
+	           	        		 operSession.setLoginName(username);
+	            	        	 operSession.setRole(roleId);
+	                 	         request.getSession().setAttribute("UserSession",operSession);
+	                  	         Cookie cookie = new Cookie("JSESSIONID",request.getSession().getId());
+	           	        		 cookie.setMaxAge(86400);
+	           	        		 cookie.setPath("/");
+	           	        		 response.addCookie(cookie);
+	                 	         MySessionContext myc= MySessionContext.getInstance();  
+	               	        	 myc.addSession(request.getSession()); 
+	               	        	 result.setCode("1");
+	                	         result.setMsg("认证通过");
+	       	        	  } 
+ 			        }else{
+			        	result.setCode("2"); 
+			        	result.setMsg("认证失败");
+			        }
+				}else{
+					result.setCode("2"); 
+		        	result.setMsg("认证失败");
+				}
+ 			}catch(Exception e){
+				e.printStackTrace();
+			}
+   		 out.print(json.toJson(result));
+  	}
+	
+	// 获取 Properties
+ 	 public static String getProperties(String filePath, String keyWord){
+         Properties prop = null;
+         String value = null;
+         try {
+             prop = PropertiesLoaderUtils.loadAllProperties(filePath);
+             value = prop.getProperty(keyWord);
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         return value;
+     } 
+	
+}

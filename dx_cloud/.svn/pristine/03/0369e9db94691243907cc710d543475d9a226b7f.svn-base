@@ -1,0 +1,778 @@
+package com.dw.dao.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.dw.common.FieldPublicFilter;
+import com.dw.common.base.TempJdbcDao;
+import com.dw.dao.IExportDao;
+import com.dw.model.ExportMessage;
+
+@Service("exportDao")
+public class ExportDaoImpl extends TempJdbcDao implements IExportDao {
+
+	@Override
+	public List<Map<String, Object>> test(ExportMessage message) {
+		List<Map<String, Object>> columnNames = null;
+		String sql = " select dt 账期,pro_nm ,total,null_num,null_rate,only_user,typ from fix_null_onlyuser where dt = '20190307' ";
+		columnNames = this.getColumnNames(sql);
+		return columnNames;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public HashMap<String, Object> getFieldsMap(Map<String, Object> map) {
+		HashMap<String, Object> reqFieldMap = new HashMap<String, Object>();
+		String sql = "SELECT ";
+		List<String> field = (List<String>) map.get("field");
+		String Fields = field.toString().substring(1, field.toString().length()-1);
+		sql += Fields + " FROM ";
+		String tableName = (String) map.get("tableName");
+		sql += tableName + " WHERE 1 = 1 ";
+		Map<String, String> whereMap = (Map<String, String>) map.get("where");
+		String groupString = "";
+		if (whereMap != null) {
+			for (String code : whereMap.keySet()) {
+				sql += " and " + code + " = '" + whereMap.get(code) + "'";
+				groupString += groupString == "" ? groupString : "," + groupString;
+			}
+		}
+		sql += groupString;
+		List<Map<String, String>> querylist = this.querylist(sql);
+		for (int i = 0; i < field.size(); i++) {
+			String code = field.get(i);
+			HashSet<String> requeSet = new HashSet<String>();
+			for (int j = 0; j < querylist.size(); j++) {
+				Map<String, String> map2 = querylist.get(j);
+				requeSet.add(map2.get(code));
+			}
+			reqFieldMap.put(code, new ArrayList<String>(requeSet));
+		}
+		return reqFieldMap;
+	}
+
+	@Override
+	public List<Map<String, Object>> getData(ExportMessage message, String sql) throws Exception {
+		List<Map<String, Object>> querylist = null;
+		Map<String, Object> req = message.getReq();
+		if (req.containsKey("start") && req.containsKey("limit")) {
+			int start = Integer.parseInt(req.get("start").toString());
+			int limit = Integer.parseInt(req.get("limit").toString());
+			sql = this.buildPageSqlMySql(sql, start, limit);
+		}
+		querylist = this.querylist(sql);
+		return querylist;
+	}
+	
+	@Override
+	public String getCount(ExportMessage message, String sql) throws Exception {
+		String total = "";
+		total = this.buildCountSqlMysql(sql);
+		return total;
+	}
+	
+	@Override
+	public String getSqls(ExportMessage message) throws Exception{
+		String sql = " select dt 账期,pro_nm 省份,total 记录数 ,null_num 空值数,null_rate 空值率,only_user 唯一用户数,typ 类型 from fix_null_onlyuser where dt = '20190307' ";
+		return sql;
+	}
+
+	@Override
+	public void getFieldHeadHibenate(ExportMessage message,String sql) throws Exception {
+		this.getColumnNames(sql);
+	}
+
+	@Override
+	public String getSqlGuest(ExportMessage message) throws Exception {
+		String sql = "";
+		return null;
+	}
+
+	@Override
+	public String getSqlGuestcall(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = " select " + 
+				" a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + "  省份," + 
+				" a.tb_nm 表名," + 
+				" a.total 记录数," + 
+				" round((a.total-b.total_cnt)/b.total_cnt*100,2) 记录数占比 " + 
+				" from dal_bdcsc_null a ," + 
+				" (select sum(total)/cnt total_cnt from (select a.dt ,a.pro_nm prov_id,a.total " + 
+				" from dal_bdcsc_null a " + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}' " + 
+				" and a.dt <= '${end_dts}'" + 
+				" group by a.dt,a.pro_nm)a,(select count(1) cnt from (select dt from dal_bdcsc_null where tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and dt >= '${star_dts}' " + 
+				" and dt <= '${end_dts}' group by dt ) aa )b)b" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}' " + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		return sql;
+	}
+
+	@Override
+	public String getSqlGuestcallUserProportion(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = "select a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + " 省份," + 
+				" a.tb_nm 表名," + 
+				" b.mdn_cnt 用户数," + 
+				" b.other_party_cnt  oth_party用户数," + 
+				" round(b.mdn_cnt/a.total,2) mdn_rate用户数占比," + 
+				" round(b.other_party_cnt/a.total,2) oth_party用户数占比" + 
+				" from dal_bdcsc_null a LEFT JOIN dal_acqcust_callrecord_col_cnt b" + 
+				" ON a.tb_nm=b.tb_en and a.dt=b.dt and a.pro_nm=b.prov_id" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}'" + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		
+		return sql;
+	}
+
+	@Override
+	public String getSqlGuestcallAbnormalTotal(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = "select " + 
+				" a.dt 账期," + 
+				instance.getpvtoC("pro_nm") + " 省份," + 
+				" a.tb_nm 表名," + 
+				" b.mdn_oparty  mdn_oparty记录数," + 
+				" b.oparty_mdn  oparty_mdn记录数," + 
+				" round(b.mdn_oparty/a.total,4) mdn_oparty记录数占比," + 
+				" round(b.oparty_mdn/a.total,4) oparty_mdn记录数占比" + 
+				" from dal_bdcsc_null a LEFT JOIN dal_acqcust_callrecord_col_cnt b" + 
+				" ON a.tb_nm=b.tb_en and a.dt=b.dt and a.pro_nm=b.prov_id" + 
+				" where a.tb_nm='dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d'" + 
+				" and a.dt >= '${star_dts}'" + 
+				" and a.dt <= '${end_dts}' group by a.dt ";
+		
+		return sql;
+	}
+	
+	@Override
+	public String getSqlIDMappingIDsystem(ExportMessage message) throws Exception {
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql=" select a.dt 账期," +
+				instance.getpvtoC("prov_id") + 
+				" 省份,a.cnt2 ID累积量,a.all_total ID总量,a.all_raie ID累积量占比 from (" + 
+				" SELECT a.dt,'allpv' prov_id,sum(a.cnt2)cnt2,sum(a.all_total) all_total,concat(round(sum(a.cnt2)/sum(a.all_total)*100,2),'%') all_raie" + 
+				" FROM " + 
+				" (SELECT a.dt,a.prov_id,sum(a.cnt1) cnt1,sum(a.cnt2) cnt2,b.all_total" + 
+				" FROM " + 
+				" bs_covered_rate a," + 
+				" (SELECT SUM(oth_zy_num)+SUM(wb_zy_num) all_total FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' AND dt=(SELECT max(dt) FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' GROUP BY tb_nm)" + 
+				" ) b WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}' group by dt,a.prov_id" + 
+				" ) a," + 
+				" (SELECT dt,prov_id,cnt1 FROM bs_user_count a WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}') b WHERE a.dt=b.dt AND a.prov_id=b.prov_id group by dt" + 
+				" union all" + 
+				" SELECT a.dt, a.prov_id,sum(a.cnt2) cnt2,sum(a.all_total) all_total,concat(round(sum(a.cnt2)/sum(a.all_total)*100,2),'%') all_raie" + 
+				" FROM " + 
+				" (SELECT a.dt,a.prov_id,sum(a.cnt1) cnt1,sum(a.cnt2) cnt2,b.all_total" + 
+				" FROM " + 
+				" bs_covered_rate a," + 
+				" (SELECT SUM(oth_zy_num)+SUM(wb_zy_num) all_total FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' AND dt=(SELECT max(dt) FROM crm_users_count WHERE typ='1' AND tb_nm='dwi_sev_user_main_info_m' GROUP BY tb_nm)" + 
+				" ) b WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}' group by dt,prov_id" + 
+				" ) a," + 
+				" (SELECT dt,prov_id,cnt1 FROM bs_user_count a WHERE a.dt>='${star_dts}' AND a.dt<='${end_dts}') b WHERE a.dt=b.dt AND a.prov_id=b.prov_id group by dt,prov_id" + 
+				" )a" + 
+				" where 1 = 1 ";
+		return sql;
+	}
+
+	@Override
+	public String getSqlLocationFusionMergelocationCitysource(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql= 
+				"select * from ("+
+						"select "+
+						"dts 账期,"+
+						instance.getpvtoC("pro_nm") + " 省份," + 
+						"hive_table_name 表名,"+
+						"kpi_id 数据类型,"+
+						"data_source 数据源类型,"+
+						"max(CASE  end_tmp_field WHEN '0' THEN count_nm ELSE 0 END ) count_nm0 不一致记录数,"+
+						"max(CASE  end_tmp_field WHEN '1' THEN count_nm ELSE 0 END ) count_nm1 一致记录数,"+
+						"max(CASE  end_tmp_field WHEN '0' THEN users_nm ELSE 0 END ) users_nm0 不一致记录数,"+
+						"max(CASE  end_tmp_field WHEN '1' THEN users_nm ELSE 0 END ) users_nm1 一致记录数,"+
+						"max(CASE  end_tmp_field WHEN '0' THEN dis_users_nm ELSE 0 END ) dis_users_nm0 不一致用户数,"+
+						"max(CASE  end_tmp_field WHEN '1' THEN dis_users_nm ELSE 0 END ) dis_users_nm1 一致用户数,"+
+						"max(CASE  end_tmp_field WHEN '0' THEN count_nm_rate ELSE 0 END ) count_nm_rate0 不一致记录数占比,"+
+						"max(CASE  end_tmp_field WHEN '1' THEN count_nm_rate ELSE 0 END ) count_nm_rate1 一致记录数占比,"+
+						"max(CASE  end_tmp_field WHEN '0' THEN dis_users_nm_rate ELSE 0 END ) dis_users_nm_rate0 不一致用户数占比,"+
+						"max(CASE  end_tmp_field WHEN '1' THEN dis_users_nm_rate ELSE 0 END ) dis_users_nm_rate1 一致用户数占比"+
+						" from ( select * from ("+
+						"select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,a.end_tmp_field,count_nm,users_nm,dis_users_nm,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate,round(dis_users_nm/dis_users_nm_sum*100,2) dis_users_nm_rate from"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1) end_tmp_field,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_cityid_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' "+
+						"and a.kpi_id='0_0_5' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1)) a"+
+						"inner join"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_cityid_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' "+
+						"and a.kpi_id='0_0_5' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' "+
+						"and a.kpi_id='0_0_5' and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}' ) tmp "+
+						"union all"+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,end_tmp_field,a.count_nm,a.users_nm,a.dis_users_nm,"+
+						"round(a.count_nm/count_nm_sum*100,2) count_nm_rate,round(dis_users_nm/dis_users_nm_sum*100,2) dis_users_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,3) city_id,hive_table_name,kpi_id,"+
+						"data_source,substring_index(end_tmp_field,'_',1) end_tmp_field,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_cityid_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' "+
+						"and a.kpi_id='0_0_5' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,substr(substring_index(end_tmp_field,'_',-1),1,3),substring_index(end_tmp_field,'_',1)"+
+						",hive_table_name,kpi_id,data_source) a"+
+						"inner join"+
+						"(select sd_date dts,hive_table_name,kpi_id,"+
+						"sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_cityid_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' "+
+						"and a.kpi_id='0_0_5' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,kpi_id) b "+
+						"on a.dts=b.dts "+
+						"and a.hive_table_name=b.hive_table_name and"+
+						"a.kpi_id=b.kpi_id where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d ' and a.kpi_id='0_0_5' "+
+						"and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}') ) tmp group by dts,city_id,hive_table_name,kpi_id,data_source"+
+						" ) tmp where 1=1";
+
+		return sql;
+	}
+
+	@Override
+	public String getSqlLocationFusionMergelocationSpeeding(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select * from ( select * from "+
+						"(select "+
+						"a.dts 账期,"+
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"a.hive_table_name 表名,"+
+						"a.kpi_id 数据类型,"+
+						"a.data_source 数据源类型,"+
+						"a.end_tmp_field ,"+
+						"count_nm 记录数,"+
+						"users_nm 记录数,"+
+						"dis_users_nm 用户数,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate 记录数占比,"+
+						"round(dis_users_nm/dis_users_nm_sum*100,2) dis_users_nm_rate 用户数占比 "+
+						"from(select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1) end_tmp_field,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_speeding_citysource_rate where  substring_index(end_tmp_field,'_',1)='1'"+
+						"group by sd_date,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1)) a"+
+						"inner join"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_speeding_citysource_rate "+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_6' and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}') as tmp"+
+						"union all"+
+						""+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,end_tmp_field,a.count_nm,a.users_nm,a.dis_users_nm,"+
+						"round(a.count_nm/count_nm_sum*100,2) count_nm_rate,round(dis_users_nm/dis_users_nm_sum*100,2) dis_users_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,3) city_id,hive_table_name,kpi_id,"+
+						"data_source,substring_index(end_tmp_field,'_',1) end_tmp_field,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_speeding_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and "+
+						"a.kpi_id='0_0_6' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}' and substring_index(end_tmp_field,'_',1)='1'"+
+						"group by sd_date,substr(substring_index(end_tmp_field,'_',-1),1,3),substring_index(end_tmp_field,'_',1)"+
+						",hive_table_name,kpi_id,data_source) a"+
+						"inner join"+
+						"(select sd_date dts,hive_table_name,kpi_id,"+
+						"sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_speeding_citysource_rate  a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and "+
+						"a.kpi_id='0_0_6' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}' and substring_index(end_tmp_field,'_',1)='1'"+
+						"group by sd_date,"+
+						"hive_table_name,kpi_id) b "+
+						"on a.dts=b.dts "+
+						"and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and "+
+						"a.kpi_id='0_0_6' and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}') "+
+						"union all"+
+						""+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,end_tmp_field,a.count_nm,a.users_nm,a.dis_users_nm,"+
+						"round(a.count_nm/count_nm_sum*100,2) count_nm_rate,round(dis_users_nm/dis_users_nm_sum*100,2) dis_users_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,5) city_id,hive_table_name,kpi_id,"+
+						"data_source,substring_index(end_tmp_field,'_',1) end_tmp_field,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_speeding_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' ";
+
+ 
+		return sql;
+	}
+
+	@Override
+	public String getSqlLocationFusionMergelocationPp(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select * from (select * from"+
+						"(select "+
+						"a.dts 账期,"+
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"a.hive_table_name 表名,"+
+						"a.kpi_id 数据类型,"+
+						"a.data_source 数据源类型,"+
+						"count_nm 记录数,"+
+						"users_nm 记录数,"+
+						"dis_users_nm 用户数,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate 记录数占比 "+
+						"from(select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_ping_pong_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,kpi_id,data_source) a"+
+						"inner join"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_ping_pong_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}') as tmp"+
+						"union all"+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,a.count_nm,a.users_nm,a.dis_users_nm,"+
+						"round(a.count_nm/count_nm_sum*100,2) count_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,3) city_id,hive_table_name,kpi_id,"+
+						"data_source,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_ping_pong_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,substr(substring_index(end_tmp_field,'_',-1),1,3),hive_table_name,kpi_id,data_source) a"+
+						"inner join"+
+						"(select sd_date dts,hive_table_name,kpi_id,"+
+						"sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_ping_pong_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,hive_table_name,kpi_id) b "+
+						"on a.dts=b.dts "+
+						"and a.hive_table_name=b.hive_table_name and"+
+						"a.kpi_id=b.kpi_id where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.dts >= '${star_dts}' AND a.dts <= '${end_dts}') "+
+						"union all"+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,a.count_nm,a.users_nm,a.dis_users_nm,"+
+						"round(a.count_nm/count_nm_sum*100,2) count_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,5) city_id,hive_table_name,kpi_id,"+
+						"data_source,sum(count_nm) count_nm,"+
+						"sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_ping_pong_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_7' and a.sd_date >= '${star_dts}' AND a.sd_date <= '${end_dts}'"+
+						"group by sd_date,substr(substring_index(end_tmp_field,'_',-1),1,5),hive_table_name,kpi_id,data_source) a"+
+						"inner join"+
+						"(select sd_date dts,hive_table_name,kpi_id,"+
+						"sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum";
+ 
+		return sql;
+	}
+
+	@Override
+	public String getSqlLocationFusionMergelocationCityid(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select * from ("+
+						"select "+
+						"dts 账期,"+
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"kpi_id 数据类型,"+
+						"hive_table_name 表名,"+
+						"MAX(CASE  data_source WHEN '01' THEN tmp_count ELSE 0 END ) tmp_count01 ,"+
+						"MAX(CASE  data_source WHEN '01' THEN count_nm ELSE 0 END ) count_nm01 OIDD记录数,"+
+						"MAX(CASE  data_source WHEN '01' THEN dis_users_nm ELSE 0 END ) dis_users_nm01 OIDD用户数,"+
+						"MAX(CASE  data_source WHEN '02' THEN tmp_count ELSE 0 END ) tmp_count02 ,"+
+						"MAX(CASE  data_source WHEN '02' THEN count_nm ELSE 0 END ) count_nm02 3gDPI记录数,"+
+						"MAX(CASE  data_source WHEN '02' THEN dis_users_nm ELSE 0 END ) dis_users_nm02 3gDPI用户数,"+
+						"MAX(CASE  data_source WHEN '03' THEN tmp_count ELSE 0 END ) tmp_count03 ,"+
+						"MAX(CASE  data_source WHEN '03' THEN count_nm ELSE 0 END ) count_nm03 DDR记录数,"+
+						"MAX(CASE  data_source WHEN '03' THEN dis_users_nm ELSE 0 END ) dis_users_nm03 DDR用户数,"+
+						"MAX(CASE  data_source WHEN '04' THEN tmp_count ELSE 0 END ) tmp_count04 ,"+
+						"MAX(CASE  data_source WHEN '04' THEN count_nm ELSE 0 END ) count_nm04 WCDR记录数,"+
+						"MAX(CASE  data_source WHEN '04' THEN dis_users_nm ELSE 0 END ) dis_users_nm04 WCDR用户数,"+
+						"MAX(CASE  data_source WHEN '05' THEN tmp_count ELSE 0 END ) tmp_count05,"+
+						"MAX(CASE  data_source WHEN '05' THEN count_nm ELSE 0 END ) count_nm05 4gDPI记录数,"+
+						"MAX(CASE  data_source WHEN '05' THEN dis_users_nm ELSE 0 END ) dis_users_nm05 4gDPI用户数"+
+						"from ("+
+						"select sd_date dts,'allpv' city_id ,kpi_id,hive_table_name, data_source,count(distinct(city_id)) tmp_count,sum(count_nm) count_nm,sum(dis_users_nm) dis_users_nm from auto_user_cityid_rate  "+
+						"where  kpi_id='2_1_10' and hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+						"and sd_date >= '${star_dts}' AND sd_date <= '${end_dts}' "+
+						"group by sd_date,data_source"+
+						"union all"+
+						"select sd_date dts,substr(city_id,1,3) prov_id,kpi_id,hive_table_name, data_source,count(distinct(city_id)) city_id_num,sum(count_nm) count_nm,sum(dis_users_nm) dis_users_nm from auto_user_cityid_rate  "+
+						"where  kpi_id='2_1_10' and hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+						"and sd_date >= '${star_dts}' AND sd_date <= '${end_dts}' "+
+						" group by sd_date,data_source,substr(city_id,1,3)"+
+						"union all"+
+						"select sd_date dts,city_id, kpi_id,hive_table_name,data_source,count(distinct(city_id)) city_id_num,sum(count_nm) count_nm,sum(dis_users_nm) dis_users_nm from auto_user_cityid_rate  "+
+						"where  kpi_id='2_1_10' and hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+						"and sd_date >= '${star_dts}' AND sd_date <= '${end_dts}' " +
+						"group by sd_date,data_source,city_id"+
+						") t group by t.dts,t.city_id,t.hive_table_name,t.kpi_id) tmp where dts >= '${star_dts}' AND dts <= '${end_dts}'";
+ 
+		return sql;
+	}
+
+	@Override
+	public String getSqlLocationFusionMergelocationVlatility(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select DISTINCT "+
+						"dts 账期,"+
+						"hive_table_name 表名,"+
+						"kpi_id 数据类型,"+
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"data_source 数据源类型,"+
+						"end_tmp_field,"+
+						"tmp_count ,"+
+						"count_nm 记录数,"+
+						"count_nm_volatility 记录数波动率,"+
+						"users_nm 记录数,"+
+						"users_nm_volatility 记录数波动率,"+
+						"dis_users_nm 用户数,"+
+						"dis_users_nm_volatility 用户数波动率"+
+						" from ("+
+						"select * from (select t.sd_date dts,t.hive_table_name,'1_0_8' kpi_id,t.city_id,t.data_source,"+
+						"t.end_tmp_field,t.tmp_count,t.count_nm,t.count_nm_volatility,t.users_nm,t.users_nm_volatility,"+
+						"t.dis_users_nm,t.dis_users_nm_volatility"+
+						" from auto_user_citysource_rate_volatility t where t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+						"and t.kpi_id='2_0_8' and sd_date>= '${star_dts}' and sd_date<= '${end_dts}' and length(city_id)=5 and city_id<>'allpv' ) tmp"+
+						"union all "+
+						"(select t.sd_date dts,t.hive_table_name,t.kpi_id,t.city_id,t.data_source,"+
+						"t.end_tmp_field,t.tmp_count,t.count_nm,t.count_nm_volatility,t.users_nm,t.users_nm_volatility,"+
+						"t.dis_users_nm,t.dis_users_nm_volatility"+
+						" from auto_user_citysource_rate_volatility t where t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+						"and t.kpi_id='1_0_8' and sd_date>= '${star_dts}' and sd_date<= '${end_dts}') "+
+						") tmp where 1=1 ";
+ 
+		return sql;
+
+	}
+
+	@Override
+	public String getSqlLocationFusionprovSourceVolatility(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+			"select * from (select "+
+			"dts 账期,"+
+			"hive_table_name 表名,"+
+			"kpi_id 数据类型,"+
+			instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+			"MAX(CASE data_source WHEN '01' THEN count_nm ELSE 0 END) OIDD记录数,"+
+			"MAX(CASE data_source WHEN '02' THEN count_nm ELSE 0 END) 3gDPI记录数,"+
+			"MAX(CASE data_source WHEN '03' THEN count_nm ELSE 0 END) DDR记录数,"+
+			"MAX(CASE data_source WHEN '04' THEN count_nm ELSE 0 END) WCDR记录数,"+
+			"MAX(CASE data_source WHEN '05' THEN count_nm ELSE 0 END) 4gDPI记录数,"+
+			"MAX(CASE data_source WHEN '01' THEN users_nm ELSE 0 END) OIDD记录数,"+
+			"MAX(CASE data_source WHEN '02' THEN users_nm ELSE 0 END) 3gDPI记录数,"+
+			"MAX(CASE data_source WHEN '03' THEN users_nm ELSE 0 END) DDR记录数,"+
+			"MAX(CASE data_source WHEN '04' THEN users_nm ELSE 0 END) WCDR记录数,"+
+			"MAX(CASE data_source WHEN '05' THEN users_nm ELSE 0 END) 4gDPI记录数,"+
+			"MAX(CASE data_source WHEN '01' THEN dis_users_nm ELSE 0 END) OIDD用户数,"+
+			"MAX(CASE data_source WHEN '02' THEN dis_users_nm ELSE 0 END) 3gDPI用户数,"+
+			"MAX(CASE data_source WHEN '03' THEN dis_users_nm ELSE 0 END) DDR用户数,"+
+			"MAX(CASE data_source WHEN '04' THEN dis_users_nm ELSE 0 END) WCDR用户数,"+
+			"MAX(CASE data_source WHEN '05' THEN dis_users_nm ELSE 0 END) 4gDPI用户数,"+
+			"MAX(CASE data_source WHEN '01' THEN count_nm_volatility ELSE 0 END) OIDD记录数波动率,"+
+			"MAX(CASE data_source WHEN '02' THEN count_nm_volatility ELSE 0 END) 3gDPI记录数波动率,"+
+			"MAX(CASE data_source WHEN '03' THEN count_nm_volatility ELSE 0 END) DDR记录数波动率,"+
+			"MAX(CASE data_source WHEN '04' THEN count_nm_volatility ELSE 0 END) WCDR记录数波动率,"+
+			"MAX(CASE data_source WHEN '05' THEN count_nm_volatility ELSE 0 END) 4gDPI记录数波动率,"+
+			"MAX(CASE data_source WHEN '01' THEN users_nm_volatility ELSE 0 END) OIDD记录数波动率,"+
+			"MAX(CASE data_source WHEN '02' THEN users_nm_volatility ELSE 0 END) 3gDPI记录数波动率,"+
+			"MAX(CASE data_source WHEN '03' THEN users_nm_volatility ELSE 0 END) DDR记录数波动率,"+
+			"MAX(CASE data_source WHEN '04' THEN users_nm_volatility ELSE 0 END) WCDR记录数波动率,"+
+			"MAX(CASE data_source WHEN '05' THEN users_nm_volatility ELSE 0 END) 4gDPI记录数波动率,"+
+			"MAX(CASE data_source WHEN '01' THEN dis_users_nm_volatility ELSE 0 END) OIDD用户数波动率,"+
+			"MAX(CASE data_source WHEN '02' THEN dis_users_nm_volatility ELSE 0 END) 3gDPI用户数波动率,"+
+			"MAX(CASE data_source WHEN '03' THEN dis_users_nm_volatility ELSE 0 END) DDR用户数波动率,"+
+			"MAX(CASE data_source WHEN '04' THEN dis_users_nm_volatility ELSE 0 END) WCDR用户数波动率,"+
+			"MAX(CASE data_source WHEN '05' THEN dis_users_nm_volatility ELSE 0 END) 4gDPI用户数波动率,"+
+			" from (select * from (select t.sd_date dts,t.hive_table_name,'1_1_8' kpi_id,t.city_id,t.data_source,"+
+			"t.end_tmp_field,t.tmp_count,t.count_nm,t.count_nm_volatility,t.users_nm,t.users_nm_volatility,"+
+			"t.dis_users_nm,t.dis_users_nm_volatility"+
+			" from auto_user_citysource_rate_volatility t where t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+			"and t.kpi_id='2_1_8' and sd_date>= '${star_dts}' and sd_date<= '${end_dts}' and length(city_id)=5 and city_id<>'allpv') tmp"+
+			"union all "+
+			"(select t.sd_date dts,t.hive_table_name,t.kpi_id,t.city_id,t.data_source,"+
+			"t.end_tmp_field,t.tmp_count,t.count_nm,t.count_nm_volatility,t.users_nm,t.users_nm_volatility,"+
+			"t.dis_users_nm,t.dis_users_nm_volatility"+
+			" from auto_user_citysource_rate_volatility t where t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+			"and t.kpi_id='1_1_8' and sd_date>= '${star_dts}' and sd_date<= '${end_dts}') "+
+			") tmp  group by dts,hive_table_name,kpi_id,city_id ) tmp where 1=1";
+
+			return sql;
+	}
+
+	@Override
+	public String LocationFusionMergelocation24timeslot(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+ 
+				"select * from "+
+				"(select "+
+				"t.dts 账期,"+
+				instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+				"t.hive_table_name 表名,"+
+				"t.kpi_id 数据类型,"+
+				"t.data_source 数据源类型,"+
+				"end_tmp_field,"+
+				"tmp_count,"+
+				"count_nm 记录数,"+
+				"users_nm 记录数,"+
+				"dis_users_nm 用户数"+
+				" from (select * from (select * from "+
+				"(select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,end_tmp_field,"+
+				"sum(tmp_count) tmp_count,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+				" from auto_user_timeslot_rate where hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and kpi_id='2_0_11' "+
+				"group by sd_date,hive_table_name,kpi_id,data_source,end_tmp_field) as tmp"+
+				" union all"+
+				" (select sd_date dts,substr(city_id,1,3) city_id,hive_table_name,kpi_id,data_source,end_tmp_field,"+
+				"sum(tmp_count) tmp_count,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+				" from auto_user_timeslot_rate where hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and kpi_id='2_0_11' "+
+				"group by sd_date,substr(city_id,1,3),hive_table_name,kpi_id,data_source,end_tmp_field)"+
+				"union all "+
+				"(select sd_date dts,substr(city_id,1,5) city_id,hive_table_name,kpi_id,data_source,end_tmp_field,"+
+				"sum(tmp_count) tmp_count,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+				" from auto_user_timeslot_rate where hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and kpi_id='2_0_11' "+
+				"group by sd_date,substr(city_id,1,5),hive_table_name,kpi_id,data_source,end_tmp_field) ) tmp"+
+				"where dts >= '${star_dts}' AND dts <= '${end_dts}') t where "+
+				"t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and t.kpi_id='2_0_11'"+
+				"group by t.dts,t.city_id,t.hive_table_name,t.kpi_id,t.data_source) tmp "+
+				"where dts >= '${star_dts}' AND dts <= '${end_dts}'";
+			return sql;
+	}
+
+	@Override
+	public String LocationFusionMergelocationSourceNumRate(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select * from "+
+				"(select "+
+				"dts 账期,"+
+				instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+				"hive_table_name 表名,"+
+				"kpi_id 数据类型,"+
+				"MAX(CASE  data_source WHEN '01' THEN count_nm ELSE 0 END ) OIDD记录数,"+
+				"MAX(CASE  data_source WHEN '02' THEN count_nm ELSE 0 END ) 3gDPI记录数,"+
+				"MAX(CASE  data_source WHEN '03' THEN count_nm ELSE 0 END ) DDR记录数,"+
+				"MAX(CASE  data_source WHEN '04' THEN count_nm ELSE 0 END ) WCDR记录数,"+
+				"MAX(CASE  data_source WHEN '05' THEN count_nm ELSE 0 END ) 4gDPI记录数,"+
+				"MAX(CASE  data_source WHEN '01' THEN count_nm_rate ELSE 0 END ) OIDD记录数占比,"+
+				"MAX(CASE  data_source WHEN '02' THEN count_nm_rate ELSE 0 END ) 3gDPI记录数占比,"+
+				"MAX(CASE  data_source WHEN '03' THEN count_nm_rate ELSE 0 END ) DDR记录数占比,"+
+				"MAX(CASE  data_source WHEN '04' THEN count_nm_rate ELSE 0 END ) WCDR记录数占比,"+
+				"MAX(CASE  data_source WHEN '05' THEN count_nm_rate ELSE 0 END ) 4gDPI记录数占比,"+
+				"MAX(CASE  data_source WHEN '01' THEN users_nm_sum ELSE 0 END ) OIDD记录数,"+
+				"MAX(CASE  data_source WHEN '02' THEN users_nm_sum ELSE 0 END ) 3gDPI记录数,"+
+				"MAX(CASE  data_source WHEN '03' THEN users_nm_sum ELSE 0 END ) DDR记录数,"+
+				"MAX(CASE  data_source WHEN '04' THEN users_nm_sum ELSE 0 END ) WCDR记录数,"+
+				"MAX(CASE  data_source WHEN '05' THEN users_nm_sum ELSE 0 END ) 4gDPI记录数,"+
+				"MAX(CASE  data_source WHEN '01' THEN dis_users_nm ELSE 0 END ) OIDD用户数,"+
+				"MAX(CASE  data_source WHEN '02' THEN dis_users_nm ELSE 0 END ) 3gDPI用户数,"+
+				"MAX(CASE  data_source WHEN '03' THEN dis_users_nm ELSE 0 END ) DDR用户数,"+
+				"MAX(CASE  data_source WHEN '04' THEN dis_users_nm ELSE 0 END ) WCDR用户数,"+
+				"MAX(CASE  data_source WHEN '05' THEN dis_users_nm ELSE 0 END ) 4gDPI用户数,"+
+				"MAX(CASE  data_source WHEN '01' THEN dis_users_nm_rate ELSE 0 END ) OIDD用户数占比,"+
+				"MAX(CASE  data_source WHEN '02' THEN dis_users_nm_rate ELSE 0 END ) 3gDPI用户数占比,"+
+				"MAX(CASE  data_source WHEN '03' THEN dis_users_nm_rate ELSE 0 END ) DDR用户数占比,"+
+				"MAX(CASE  data_source WHEN '04' THEN dis_users_nm_rate ELSE 0 END ) WCDR用户数占比,"+
+				"MAX(CASE  data_source WHEN '05' THEN dis_users_nm_rate ELSE 0 END ) 4gDPI用户数占比"+
+				"from (select * from (select a.sd_date dts,'allpv' city_id,a.hive_table_name,'2_1_8' kpi_id,a.data_source,"+
+				"concat(sum(count_nm),'') count_nm,round(sum(count_nm)/count_nm_sum_all*100,2) count_nm_rate"+
+				",sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm,"+
+				"concat(round(sum(dis_users_nm)/dis_users_nm_sum_all*100,2),'') dis_users_nm_rate"+
+				" from auto_user_citysource_rate a inner join"+
+				"(select sd_date,hive_table_name,kpi_id,sum(count_nm) count_nm_sum_all,"+
+				"sum(users_nm) users_nm_sum_all,sum(dis_users_nm) dis_users_nm_sum_all"+
+				" from auto_user_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+				"and a.kpi_id='1_1_8' group by sd_date,hive_table_name,kpi_id) b on a.sd_date=b.sd_date "+
+				"and a.hive_table_name=b.hive_table_name and a.kpi_id=b.kpi_id"+
+				" where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+				"and a.kpi_id='1_1_8' group by a.sd_date,a.hive_table_name,a.kpi_id,a.data_source) as tmp1 union all"+
+				"(select a.sd_date dts,a.city_id,a.hive_table_name,'2_1_8' kpi_id,a.data_source,"+
+				"count_nm,concat(round(count_nm/count_nm_sum*100,2),'') count_nm_rate,users_nm,"+
+				"dis_users_nm,concat(round(dis_users_nm/dis_users_nm_sum*100,2),'') dis_users_nm_rate"+
+				"from auto_user_citysource_rate a inner join "+
+				"(select sd_date,hive_table_name,kpi_id,sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,"+
+				"sum(dis_users_nm) dis_users_nm_sum"+
+				" from auto_user_citysource_rate where hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and kpi_id='1_1_8'"+
+				" group by sd_date,hive_table_name,kpi_id) b on a.sd_date=b.sd_date and a.hive_table_name=b.hive_table_name "+
+				"and a.kpi_id=b.kpi_id"+
+				" where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and a.kpi_id='1_1_8' ) union all"+
+				"(select a.sd_date dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,"+
+				"count_nm,concat(round(count_nm/count_nm_sum*100,2),'') count_nm_rate,users_nm,dis_users_nm,"+
+				"concat(round(dis_users_nm/dis_users_nm_sum*100,2),'') dis_users_nm_rate"+
+				"from auto_user_citysource_rate a inner join "+
+				"(select sd_date,hive_table_name,kpi_id,sum(count_nm) count_nm_sum,sum(users_nm) users_nm_sum,"+
+				"sum(dis_users_nm) dis_users_nm_sum"+
+				" from auto_user_citysource_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+				"and a.kpi_id='2_1_8' group by sd_date,hive_table_name,kpi_id) b"+
+				"on a.sd_date=b.sd_date and a.hive_table_name=b.hive_table_name and a.kpi_id=b.kpi_id"+
+				" where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d'"+
+				"and a.kpi_id='2_1_8') ) tmp where dts >='${star_dts}' AND dts <= '${end_dts}' "+
+				"group by dts,city_id,hive_table_name,kpi_id ) tmp where 1=1";
+
+				return sql;
+	}
+
+	@Override
+	public String LocationFusionMergelocation_mskInterval(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"select * from "+
+						"(select "+
+						"t.dts 账期,"+
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"t.hive_table_name 表名,"+
+						"t.kpi_id 数据类型,"+
+						"MAX(CASE  end_tmp_field WHEN '1' THEN count_nm ELSE 0 END ) 区间为1的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '2-10' THEN count_nm ELSE 0 END ) 区间为2-10的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '10-24' THEN count_nm ELSE 0 END ) 区间为10-24的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '24-48' THEN count_nm ELSE 0 END ) 区间为24-48的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '>48' THEN count_nm ELSE 0 END ) 区间大于48的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '1' THEN users_nm ELSE 0 END ) 区间为1的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '2-10' THEN users_nm ELSE 0 END ) 区间为2-10的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '10-24' THEN users_nm ELSE 0 END ) 区间为10-24的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '24-48' THEN users_nm ELSE 0 END ) 区间为24-48的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '>48' THEN users_nm ELSE 0 END ) 区间大于48的记录数,"+
+						"MAX(CASE  end_tmp_field WHEN '1' THEN dis_users_nm ELSE 0 END ) 区间为1的用户数,"+
+						"MAX(CASE  end_tmp_field WHEN '2-10' THEN dis_users_nm ELSE 0 END ) 区间为2-10的用户数,"+
+						"MAX(CASE  end_tmp_field WHEN '10-24' THEN dis_users_nm ELSE 0 END ) 区间为10-24的用户数,"+
+						"MAX(CASE  end_tmp_field WHEN '24-48' THEN dis_users_nm ELSE 0 END ) 区间为24-48的用户数,"+
+						"MAX(CASE  end_tmp_field WHEN '>48' THEN dis_users_nm ELSE 0 END ) 区间大于48的用户数"+
+						" from (select * from (select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,"+
+						"end_tmp_field,count_nm,users_nm,dis_users_nm,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate from"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1) "+
+						"end_tmp_field,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1)) a"+
+						"inner join"+
+						"(select sd_date dts,'allpv' city_id,hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.dts >= '${star_dts}' AND a.dts >= '${star_dts}' ) tmp"+
+						"union all"+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,"+
+						"end_tmp_field,count_nm,users_nm,dis_users_nm,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,3) city_id,"+
+						"hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1) "+
+						"end_tmp_field,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1),"+
+						"substr(substring_index(end_tmp_field,'_',-1),1,3)) a"+
+						"inner join"+
+						"(select sd_date dts,"+
+						"hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b "+
+						"on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source where "+
+						"a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and a.kpi_id='0_0_12' "+
+						"and a.dts >= '${star_dts}' AND a.dts >= '${star_dts}'"+
+						") union all"+
+						"(select a.dts,a.city_id,a.hive_table_name,a.kpi_id,a.data_source,"+
+						"end_tmp_field,count_nm,users_nm,dis_users_nm,"+
+						"round(count_nm/count_nm_sum*100,2) count_nm_rate from"+
+						"(select sd_date dts,substr(substring_index(end_tmp_field,'_',-1),1,5) city_id,"+
+						"hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1) "+
+						"end_tmp_field,sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,kpi_id,data_source,substring_index(end_tmp_field,'_',1),"+
+						"substr(substring_index(end_tmp_field,'_',-1),1,5)) a"+
+						"inner join"+
+						"(select sd_date dts,"+
+						"hive_table_name,data_source,kpi_id,sum(count_nm) count_nm_sum,"+
+						"sum(users_nm) users_nm_sum,sum(dis_users_nm) dis_users_nm_sum"+
+						" from auto_user_interval_rate a where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' "+
+						"and a.kpi_id='0_0_12' and a.sd_date >= '${star_dts}' AND a.sd_date >= '${star_dts}' "+
+						"group by sd_date,hive_table_name,data_source,kpi_id) b "+
+						"on a.dts=b.dts and a.hive_table_name=b.hive_table_name and "+
+						"a.kpi_id=b.kpi_id and a.data_source=b.data_source "+
+						"where a.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and a.kpi_id='0_0_12' and a.dts >= '${star_dts}' "+
+						"AND a.dts >= '${star_dts}' )) t  where t.hive_table_name='dwi_m.dwi_res_regn_mergelocation_msk_d' and t.kpi_id='0_0_12'"+
+						"group by t.dts,t.city_id,t.hive_table_name,t.kpi_id,t.data_source) tmp where dts >= '${star_dts}' AND dts >= '${star_dts}'";
+
+
+				return sql;
+	}
+
+	@Override
+	public String LocationFusionMergelocationUpdateInterval(ExportMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		FieldPublicFilter instance = FieldPublicFilter.getInstance();
+		String sql = 
+				"   select * from (select  " +
+						"  t.dts 账期, " +
+						instance.getpvtoC("pro_nm") + " 省份（城市）," + 
+						"  t.hive_table_name 表名, " +
+						"  t.kpi_id 数据类型, " +
+						"  t.data_source 数据源类型, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '0-10' THEN count_nm ELSE 0 END ),'') 区间为0-10记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '0-10' THEN users_nm ELSE 0 END ),'') 区间为0-10记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '0-10' THEN dis_users_nm ELSE 0 END ),'') 区间为0-10用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '10-20' THEN count_nm ELSE 0 END ),'') 区间为10-20记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '10-20' THEN users_nm ELSE 0 END ),'') 区间为10-20记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '10-20' THEN dis_users_nm ELSE 0 END ),'') 区间为10-20用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '20-30' THEN count_nm ELSE 0 END ),'') 区间为20-30记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '20-30' THEN users_nm ELSE 0 END ),'') 区间为20-30记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '20-30' THEN dis_users_nm ELSE 0 END ),'') 区间为20-30用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '30-40' THEN count_nm ELSE 0 END ),'') 区间为30-40记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '30-40' THEN users_nm ELSE 0 END ),'') 区间为30-40记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '30-40' THEN dis_users_nm ELSE 0 END ),'') 区间为30-40用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '40-60' THEN count_nm ELSE 0 END ),'') 区间为40-60记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '40-60' THEN users_nm ELSE 0 END ),'') 区间为40-60记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '40-60' THEN dis_users_nm ELSE 0 END ),'') 区间为40-60用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '60-90' THEN count_nm ELSE 0 END ),'') 区间为60-90记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '60-90' THEN users_nm ELSE 0 END ),'') 区间为60-90记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '60-90' THEN dis_users_nm ELSE 0 END ),'') 区间为60-90用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '90-120' THEN count_nm ELSE 0 END ),'') 区间为90-120记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '90-120' THEN users_nm ELSE 0 END ),'') 区间为90-120记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '90-120' THEN dis_users_nm ELSE 0 END ),'') 区间为90-120用户数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '>=120' THEN count_nm ELSE 0 END ),'') 区间大约120记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '>=120' THEN users_nm ELSE 0 END ),'') 区间大约120记录数, " +
+						"      concat(SUM(CASE  end_tmp_field WHEN '>=120' THEN dis_users_nm ELSE 0 END ),'') 区间大约120用户数 " +
+						"   from (select * from  " +
+						"  (select sd_date dts,'allpv' city_id,hive_table_name,kpi_id,data_source,end_tmp_field,tmp_count, " +
+						"  sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm " +
+						"   from auto_user_update_interval_rate t where sd_date >= '${star_dts}' AND sd_date <= '${end_dts}' and " +
+						"  t.hive_table_name='0_0_14'  " +
+						"  and t.kpi_id='1_0_13' group by sd_date,hive_table_name,kpi_id,data_source,end_tmp_field,tmp_count) as tmp " +
+						"  union all " +
+						"  (select sd_date dts,substr(city_id,1,3) city_id,hive_table_name,kpi_id,data_source,end_tmp_field,tmp_count, " +
+						"  sum(count_nm) count_nm,sum(users_nm) users_nm,sum(dis_users_nm) dis_users_nm " +
+						"   from auto_user_update_interval_rate t where sd_date >= '${star_dts}' AND sd_date <= '${end_dts}' and " +
+						"  t.hive_table_name='0_0_14'  " +
+						"  and t.kpi_id='1_0_13'  " +
+						"  group by sd_date,substr(city_id,1,3),hive_table_name,kpi_id,data_source,end_tmp_field,tmp_count)) t   " +
+						"  where t.hive_table_name='0_0_14' and t.kpi_id='1_0_13' " +
+						"   group by t.dts,t.hive_table_name,city_id,t.kpi_id,t.data_source) tmp where 1=1 " ;
+
+				return sql;
+	}
+}

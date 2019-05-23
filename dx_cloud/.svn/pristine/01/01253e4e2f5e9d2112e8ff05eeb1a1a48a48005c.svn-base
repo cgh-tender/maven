@@ -1,0 +1,431 @@
+package com.dw.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hwpf.model.Sttb;
+import org.springframework.mail.MailMessage;
+import org.springframework.stereotype.Service;
+
+import com.dw.model.ExportMessage;
+
+public interface IExportDao {
+
+	List<Map<String, Object>> test(ExportMessage message);
+
+	/**
+	 * 获取指定字段的内容
+	 * @return
+	 */
+	HashMap<String, Object> getFieldsMap(Map<String, Object> map) throws Exception;
+
+	void getFieldHeadHibenate(ExportMessage message,String sql) throws Exception;
+	/**
+	 * 获取 数据
+	 * @param sql 
+	 * @param sql
+	 * @return
+	 * @throws Exception
+	 */
+	List<Map<String, Object>> getData(ExportMessage message, String sql) throws Exception;
+	/**
+	 * 获取行数
+	 * @param sql
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getCount(ExportMessage message, String sql)throws Exception;
+	
+	/**
+	 * 测试 sql
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqls(ExportMessage message) throws Exception;
+	
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图2 参数: dt 全国数据
+	 * dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d
+	 * report_ac_cust_call.do?fieldNameEN=requestType1,requestType2,dts&fieldVal=2,dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d,20190310-20190316&typechart=1
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcall(ExportMessage message) throws Exception;
+
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国记录数及波动率统计 图3 参数: dt 全国数据
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcallUserProportion(ExportMessage message) throws Exception;
+	
+	/**
+	 * 获客 dal_bdcsc_fix_opp_nbr_dur_info_special_msk_d 全国异常记录数统计 图4 参数: dt 全国数据
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuestcallAbnormalTotal(ExportMessage message)throws Exception;
+	
+	/**
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlGuest(ExportMessage message) throws Exception;
+	/**
+	 * IDMapping ID 体系 ID总量历史趋势图 report_id_mapping_cover_rate.do 图1 参数 dt prov_id
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlIDMappingIDsystem(ExportMessage message) throws Exception;
+	
+	/**
+	 * 报告城市资源   report_dwi_res_regn_mergelocation_msk_d_citysource
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlLocationFusionMergelocationCitysource(ExportMessage message) throws Exception;
+ 
+	/**
+	 * 报告超速行驶  report_dwi_res_regn_mergelocation_msk_d_speeding 
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlLocationFusionMergelocationSpeeding(ExportMessage message) throws Exception;
+ 
+	/**
+	 * 地点PP report_dwi_res_regn_mergelocation_msk_d_pp  
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlLocationFusionMergelocationPp(ExportMessage message) throws Exception;
+	
+	
+	/**
+	 * 报告地点城市  report_dwi_res_regn_mergelocation_msk_d_cityid
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlLocationFusionMergelocationCityid(ExportMessage message) throws Exception;
+	
+	
+	/**
+	 * 地点波动性 report_dwi_res_regn_mergelocation_msk_d_prov_volatility
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String getSqlLocationFusionMergelocationVlatility(ExportMessage message) throws Exception;
+	
+
+	/**
+	 * 准备金来源波动率 report_dwi_res_regn_mergelocation_msk_d_prov_source_volatility
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	 String getSqlLocationFusionprovSourceVolatility(ExportMessage message) throws Exception;
+	 
+
+
+ 	/**
+ 	 * 时段cityID数量和去重用户数 report_dwi_res_regn_mergelocation_msk_d_24timeslot
+ 	 * @param message
+ 	 * @return
+ 	 * @throws Exception
+ 	 */
+	String LocationFusionMergelocation24timeslot(ExportMessage message) throws Exception;
+	
+	
+	/**
+	 *  资源回收率 report_dwi_res_regn_mergelocation_msk_d_source_num_rate
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	 String LocationFusionMergelocationSourceNumRate(ExportMessage message) throws Exception;
+	 
+ 
+	 /**
+	  * 记录数用户区间report_dwi_res_regn_mergelocation_msk_d_interval
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	String LocationFusionMergelocation_mskInterval(ExportMessage message) throws Exception;
+
+	/**
+	 * 用户更新周期分布 report_dwi_res_regn_mergelocation_msk_d_update_interval
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String LocationFusionMergelocationUpdateInterval(ExportMessage message) throws Exception;
+	
+	/**
+	 * 出行省分布情况  report_dwi_res_regn_mergelocation_msk_d_range_provid
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String LocationFusionMergelocationRangeProvid(ExportMessage message) throws Exception;
+	
+	/**
+	 * 出行市分布情况  report_dwi_res_regn_mergelocation_msk_d_range_cityid
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String LocationFusionMergelocationRangeCityid(ExportMessage message) throws Exception;
+	
+	
+	/**
+	 * 合并PP report_dwi_res_regn_mergelocation_msk_d_pp
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	 String LocationFusionMergelocationPP(ExportMessage message) throws Exception;
+	
+	 /**
+	  * // 合并地点超速 report_dwi_res_regn_mergelocation_msk_d_speeding
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String LocationFusionMergelocationSpeeding(ExportMessage message) throws Exception;
+	 
+	
+	 /**
+	  * // 报告时间点  eport_dwi_res_regn_staypoint_msk_d_pp_all_num
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointPPAllNum(ExportMessage message) throws Exception;
+	
+	 /**
+	  * //  报告记录点  report_dwi_res_regn_staypoint_msk_d_pp_num
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointPPNum(ExportMessage message) throws Exception;
+	
+	 /**
+	  * // 报告记录点编号 report_dwi_res_regn_staypoint_msk_d_num
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointDNum(ExportMessage message) throws Exception;
+	
+	 /**
+	  * // 报告时间点 report_dwi_res_regn_staypoint_msk_d_24hour_num
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypoint24hourNum(ExportMessage message) throws Exception;
+		
+	 /**
+	  * // 报告时间间隔 report_dwi_res_regn_staypoint_msk_d_interval
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointInterval(ExportMessage message) throws Exception;
+	
+	 /**
+	  * // 报告工作地点  report_dwi_res_regn_staypoint_msk_d_sixhours
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointSixhours(ExportMessage message) throws Exception;
+	
+	 /**
+	  * // 报告点 指向 report_dwi_res_regn_staypoint_msk_d_point
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointPoint(ExportMessage message) throws Exception;
+	 
+	
+	 /**
+	  * // 稳定点 report_dwi_res_regn_staypoint_msk_d_nogrid
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	 String StoppingPointStaypointNogrid(ExportMessage message) throws Exception;
+
+	
+	 /**
+	  * // 报告工作地点 report_dwi_res_regn_staypoint_msk_d_nopoint	
+	  * @param message
+	  * @return
+	  * @throws Exception
+	  */
+	String StoppingPointStaypointNopoint(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 报告时间  report_dwi_res_regn_staypoint_msk_d_rangetime
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String StoppingPointStaypointRangetime(ExportMessage message) throws Exception;
+
+	
+	/**
+	 * // 报告城市 report_dws_wdtb_city_od_msk_d
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCity(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 报告城市时间 report_dws_wdtb_city_od_msk_d_rangetime	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityRangetime(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 报告城市距离 report_dws_wdtb_city_od_msk_d_distance	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityDistance(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 城市 out report_dws_wdtb_city_od_msk_d_out
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityOut(ExportMessage message) throws Exception;
+	
+	
+	/**
+	 * // 城市 in report_dws_wdtb_city_od_msk_d_in	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityIn(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 异或 report_dws_wdtb_city_od_msk_d_xor	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityXor(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 城市范围  report_dws_wdtb_city_od_msk_d_range
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityRange(ExportMessage message) throws Exception;
+
+	 
+	/**
+	 * // msk_d  report_dws_wdtb_city_od_msk_d
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomaiCityMsk_d(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 测距时间 report_dws_wdtb_city_od_msk_d_rangetime	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityMsk_D_Rangetime(ExportMessage message) throws Exception;
+
+	/**
+	 * //  距离 report_dws_wdtb_city_od_msk_d_distance
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityMsk_D_Distance(ExportMessage message) throws Exception;
+	
+	/**
+	 * //out report_dws_wdtb_city_od_msk_d_out	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityMsk_D_Out(ExportMessage message) throws Exception;
+		
+	/**
+	 * //in	report_dws_wdtb_city_od_msk_d_in
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityMsk_D_In(ExportMessage message) throws Exception;
+	
+	/**
+	 * // xor report_dws_wdtb_city_od_msk_d_xor
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainCityMsk_D_xor(ExportMessage message) throws Exception;
+	
+	/**
+	 * // 历史访问 城市 report_dws_wdtb_history_access_city_msk_d	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainHistoryAccessCityMsk_D(ExportMessage message) throws Exception;
+		
+	/**
+	 * //历史访问 PP report_dws_wdtb_history_access_city_msk_d_pp
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainHistoryAccessCityMsk_D_PP(ExportMessage message) throws Exception;
+		
+	/**
+	 * // 历史访问编号 report_dws_wdtb_history_access_msk_d_num	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainHistoryAccessCityMsk_D_NUM(ExportMessage message) throws Exception;
+	
+		
+	/**
+	 * // 历史访问 report_dws_wdtb_history_access_city_msk_d	
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	String CrossDomainHistoryAccessCityMsk_D1(ExportMessage message) throws Exception;
+}

@@ -1,0 +1,21 @@
+package com.dw.common.base;
+
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.transform.Transformers;
+
+public class TempJdbcDao extends BaseDAOHibernate{
+	public List querylist(String sql){
+		Session session=getCurrentSession();
+		Query q=session.createSQLQuery(sql);
+		q.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+		return   q.list();
+	} 
+	
+	 
+}

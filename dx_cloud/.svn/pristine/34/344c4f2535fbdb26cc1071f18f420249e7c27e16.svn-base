@@ -1,0 +1,10 @@
+application.name=yyglxt
+application.password=passw0rd
+application.login.url=http\://111.235.158.226\:8250/
+
+crowd.base.url=http\://10.34.1.207:\8098/crowd/
+
+session.isauthenticated=session.isauthenticated
+session.tokenkey=session.tokenkey
+session.validationinterval=0
+session.lastvalidation=session.lastvalidation

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="User" table="ums_user">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="userId" column="user_id" type="string"/>
+		<property name="loginName" column="login_Name" type="string"/>
+		<property name="password" column="password" type="string"/>
+		<property name="passShow" column="pass_show" type="string"/>
+		<property name="username" column="user_name" type="string"/>
+		<property name="phone" column="phone" type="string"/>
+		<property name="email" column="email" type="string"/>
+		<property name="roleId" column="role_id" type="string"/>
+		<property name="organizationId" column="organization_id" type="string"/> 
+		<property name="createTime" column="create_time" type="string"/>
+		<property name="updateTime" column="update_time" type="string"/>
+	    <property name="style_flag" column="style_flag" type="string"/>
+	    <property name="regionId" column="regionId" type="int"/>
+	    <property name="orgName" column="orgName" type="string"/>
+	    <property name="job" column="job" type="string"/>
+	    <property name="unit" column="unit" type="string"/>
+	    <property name="telephone" column="telephone" type="string"/>
+	    <property name="sex" column="sex" type="int"/>
+	    <property name="employmentNature" column="employmentNature" type="int"/>
+	    
+ 	</class>
+</hibernate-mapping>

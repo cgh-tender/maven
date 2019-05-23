@@ -1,0 +1,522 @@
+2018-08-27 18:06:55,230 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:06:55,254 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:06:55,258 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:06:55,283 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:06:55,287 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:06:55,294 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:06:55,302 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:9796<->127.0.0.1:8888
+2018-08-27 18:06:55,302 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:06:55,302 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:06:55,303 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:06:55,306 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:06:55,307 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:06:55,307 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:06:55,307 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:06:55,307 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:06:55,307 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:06:55,307 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/x-json;charset=UTF-8[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "Content-Length: 39[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:06:55 GMT[\r][\n]"
+2018-08-27 18:06:55,645 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:06:55,650 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 18:06:55,650 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:06:55,650 DEBUG http.headers - http-outgoing-0 << Content-Type: application/x-json;charset=UTF-8
+2018-08-27 18:06:55,650 DEBUG http.headers - http-outgoing-0 << Content-Length: 39
+2018-08-27 18:06:55,650 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:06:55 GMT
+2018-08-27 18:06:55,655 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:06:55,662 DEBUG http.wire - http-outgoing-0 << "{"msg":"[0xe8][0xaf][0xb7][0xe9][0x87][0x8d][0xe6][0x96][0xb0][0xe7][0x99][0xbb][0xe5][0xbd][0x95][0xef][0xbc][0x81]","code":"0"}"
+2018-08-27 18:06:55,662 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 18:06:55,662 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:07:32,945 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:07:32,960 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:07:32,962 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:07:32,983 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:07:32,986 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:07:32,992 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:07:32,996 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:9815<->127.0.0.1:8888
+2018-08-27 18:07:32,996 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:07:32,996 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:07:32,997 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:07:33,000 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:07:33,000 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:07:33,001 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/x-json;charset=UTF-8[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "Content-Length: 39[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:07:33 GMT[\r][\n]"
+2018-08-27 18:07:33,005 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:07:33,009 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 18:07:33,009 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:07:33,009 DEBUG http.headers - http-outgoing-0 << Content-Type: application/x-json;charset=UTF-8
+2018-08-27 18:07:33,009 DEBUG http.headers - http-outgoing-0 << Content-Length: 39
+2018-08-27 18:07:33,010 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:07:33 GMT
+2018-08-27 18:07:33,014 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:07:33,020 DEBUG http.wire - http-outgoing-0 << "{"msg":"[0xe8][0xaf][0xb7][0xe9][0x87][0x8d][0xe6][0x96][0xb0][0xe7][0x99][0xbb][0xe5][0xbd][0x95][0xef][0xbc][0x81]","code":"0"}"
+2018-08-27 18:07:33,020 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 18:07:33,020 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:11:15,667 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:11:15,683 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:11:15,685 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:11:15,707 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:11:15,709 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:11:15,716 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:11:15,720 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:9910<->127.0.0.1:8888
+2018-08-27 18:11:15,720 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:11:15,721 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:11:15,721 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:11:15,725 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:11:15,726 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:11:15,726 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:11:15,726 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:11:15,726 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:11:15,726 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:11:15,726 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:11:15,726 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:11:15,726 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:11:15,726 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:11:15,727 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:11:15,727 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:11:15,727 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:11:16 GMT[\r][\n]"
+2018-08-27 18:11:16,126 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:11:16,131 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:11:16 GMT
+2018-08-27 18:11:16,135 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:13:20,025 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:13:20,040 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:13:20,042 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:13:20,063 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:13:20,065 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:13:20,071 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:13:20,076 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:9942<->127.0.0.1:8888
+2018-08-27 18:13:20,076 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:13:20,076 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:13:20,077 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:13:20,080 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:13:20,080 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:13:20,081 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:13:20,442 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:13:20,442 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:13:20,442 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:13:20,442 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:13:20,443 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:13:20,443 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:13:20 GMT[\r][\n]"
+2018-08-27 18:13:20,443 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:13:20,447 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:13:20 GMT
+2018-08-27 18:13:20,452 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:13:50,776 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:13:50,791 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:13:50,794 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:13:50,816 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:13:50,818 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:13:50,825 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:13:50,829 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:9953<->127.0.0.1:8888
+2018-08-27 18:13:50,830 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:13:50,830 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:13:50,831 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:13:50,834 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:13:50,834 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:13:50,834 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:13:50,834 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:13:50,834 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:13:50,834 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:13:50,835 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:13:50,835 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:14:04,646 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:14:04,646 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:14:04,646 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:14:04,646 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:14:04,646 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:14:04,647 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:14:04 GMT[\r][\n]"
+2018-08-27 18:14:04,647 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:14:04,651 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:14:04 GMT
+2018-08-27 18:14:04,657 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:43:41,583 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:43:41,598 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:43:41,600 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:43:41,621 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:43:41,623 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:43:41,630 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:43:41,635 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:10942<->127.0.0.1:8888
+2018-08-27 18:43:41,635 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:43:41,635 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:43:41,636 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:43:41,638 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:43:41,639 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:43:41,639 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:43:41,639 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:43:41,639 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:43:41,639 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:43:41,639 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:43:55 GMT[\r][\n]"
+2018-08-27 18:43:55,446 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:43:55,450 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:43:55,450 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:43:55,450 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:43:55,451 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:43:55,451 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:43:55,451 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:43:55 GMT
+2018-08-27 18:43:55,455 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:49:15,820 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:49:15,838 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:49:15,841 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:49:15,862 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:49:15,865 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:49:15,872 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:49:15,876 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11188<->127.0.0.1:8888
+2018-08-27 18:49:15,877 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:49:15,877 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:49:15,878 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:49:15,882 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:49:15,883 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:49:26,128 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 18:49:26,129 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:49:26,129 DEBUG http.wire - http-outgoing-0 << "Content-Length: 0[\r][\n]"
+2018-08-27 18:49:26,129 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:49:26 GMT[\r][\n]"
+2018-08-27 18:49:26,129 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:49:26,133 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 18:49:26,133 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:49:26,133 DEBUG http.headers - http-outgoing-0 << Content-Length: 0
+2018-08-27 18:49:26,133 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:49:26 GMT
+2018-08-27 18:49:26,138 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:49:26,138 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 18:49:26,139 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:49:54,703 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:49:54,724 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:49:54,727 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:49:54,753 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:49:54,756 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:49:54,764 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:49:54,770 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11190<->127.0.0.1:8888
+2018-08-27 18:49:54,771 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:49:54,771 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:49:54,772 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:49:54,777 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:49:54,778 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:49:54,778 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:49:54,778 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:49:54,778 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:49:54,778 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:49:54,778 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:49:54,779 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/json;charset=utf-8[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:50:32 GMT[\r][\n]"
+2018-08-27 18:50:32,840 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:50:32,845 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 18:50:32,846 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:50:32,846 DEBUG http.headers - http-outgoing-0 << Content-Type: application/json;charset=utf-8
+2018-08-27 18:50:32,846 DEBUG http.headers - http-outgoing-0 << Content-Length: 1
+2018-08-27 18:50:32,846 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:50:32 GMT
+2018-08-27 18:50:32,852 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:50:32,858 DEBUG http.wire - http-outgoing-0 << "1"
+2018-08-27 18:50:32,858 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 18:50:32,859 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:53:06,448 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:53:06,465 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:53:06,467 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:53:06,489 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:53:06,491 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:53:06,499 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:53:06,506 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11224<->127.0.0.1:8888
+2018-08-27 18:53:06,506 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:53:06,506 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:53:06,507 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:53:06,511 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:53:06,512 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:53:06,512 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:53:06,512 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:53:06,512 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:53:06,512 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:53:06,512 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:53:06,512 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:53:06,512 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:53:06,513 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:53:06,513 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:53:06,513 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:53:06,513 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:53:06,889 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:53:06,889 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:53:06,889 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:53:06,889 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:53:06,890 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:53:06,890 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:53:06 GMT[\r][\n]"
+2018-08-27 18:53:06,890 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:53:06,894 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:53:06 GMT
+2018-08-27 18:53:06,899 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:53:28,517 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:53:28,533 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:53:28,535 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:53:28,557 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:53:28,559 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:53:28,566 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:53:28,571 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11227<->127.0.0.1:8888
+2018-08-27 18:53:28,571 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:53:28,571 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:53:28,572 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:53:28,575 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:53:28,576 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:53:28,590 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:53:28 GMT[\r][\n]"
+2018-08-27 18:53:28,591 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 18:53:28,597 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:53:28 GMT
+2018-08-27 18:53:28,601 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:56:24,828 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 18:56:24,849 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 18:56:24,853 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 18:56:24,878 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 18:56:24,880 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 18:56:24,886 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 18:56:24,891 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11258<->127.0.0.1:8888
+2018-08-27 18:56:24,891 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:56:24,891 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 18:56:24,892 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 18:56:24,894 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 18:56:24,895 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 18:56:24,895 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 18:56:24,895 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 18:56:24,895 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 18:56:24,895 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 18:56:24,895 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 18:56:24,895 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 18:56:24,895 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 18:56:24,895 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 18:56:24,895 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 18:56:24,896 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 18:56:24,896 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 18:58:53,121 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 18:58:53,121 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 18:58:53,122 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/json;charset=utf-8[\r][\n]"
+2018-08-27 18:58:53,122 DEBUG http.wire - http-outgoing-0 << "Content-Length: 50[\r][\n]"
+2018-08-27 18:58:53,122 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 10:58:53 GMT[\r][\n]"
+2018-08-27 18:58:53,122 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 18:58:53,129 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 18:58:53,129 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 18:58:53,129 DEBUG http.headers - http-outgoing-0 << Content-Type: application/json;charset=utf-8
+2018-08-27 18:58:53,129 DEBUG http.headers - http-outgoing-0 << Content-Length: 50
+2018-08-27 18:58:53,129 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 10:58:53 GMT
+2018-08-27 18:58:53,136 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 18:58:53,144 DEBUG http.wire - http-outgoing-0 << "{synStatus:'1',synMsg:'[0xe5][0x90][0x8c][0xe6][0xad][0xa5][0xe5][0xa4][0xb1][0xe8][0xb4][0xa5]:[0xe7][0xad][0xbe][0xe5][0x90][0x8d][0xe4][0xb8][0xba][0xe7][0xa9][0xba]'}"
+2018-08-27 18:58:53,144 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 18:58:53,145 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:00:27,273 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 19:00:27,288 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 19:00:27,291 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 19:00:27,312 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:00:27,315 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 19:00:27,323 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 19:00:27,330 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11303<->127.0.0.1:8888
+2018-08-27 19:00:27,330 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:00:27,330 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 19:00:27,331 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 19:00:27,334 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 19:00:27,335 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/json;charset=utf-8[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "Content-Length: 50[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 11:01:07 GMT[\r][\n]"
+2018-08-27 19:01:07,326 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 19:01:07,332 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 19:01:07,332 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 19:01:07,332 DEBUG http.headers - http-outgoing-0 << Content-Type: application/json;charset=utf-8
+2018-08-27 19:01:07,332 DEBUG http.headers - http-outgoing-0 << Content-Length: 50
+2018-08-27 19:01:07,332 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 11:01:07 GMT
+2018-08-27 19:01:07,337 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 19:01:07,343 DEBUG http.wire - http-outgoing-0 << "{synStatus:'1',synMsg:'[0xe5][0x90][0x8c][0xe6][0xad][0xa5][0xe5][0xa4][0xb1][0xe8][0xb4][0xa5]:[0xe7][0xad][0xbe][0xe5][0x90][0x8d][0xe4][0xb8][0xba][0xe7][0xa9][0xba]'}"
+2018-08-27 19:01:07,343 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 19:01:07,344 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:03:12,948 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 19:03:13,019 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 19:03:13,025 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 19:03:13,081 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:03:13,086 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 19:03:13,097 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 19:03:13,103 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11343<->127.0.0.1:8888
+2018-08-27 19:03:13,103 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:03:13,103 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 19:03:13,105 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 19:03:13,110 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:03:13,110 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 19:03:13,110 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 19:03:13,110 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 19:03:13,110 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 19:03:13,111 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 19:03:13,111 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 19:03:13,111 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 19:03:13,111 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 19:03:13,111 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 19:03:13,111 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 19:03:13,112 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 19:03:13,112 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 19:03:29,277 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 200 OK[\r][\n]"
+2018-08-27 19:03:29,277 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 19:03:29,277 DEBUG http.wire - http-outgoing-0 << "Content-Type: application/json;charset=utf-8[\r][\n]"
+2018-08-27 19:03:29,278 DEBUG http.wire - http-outgoing-0 << "Content-Length: 50[\r][\n]"
+2018-08-27 19:03:29,278 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 11:03:29 GMT[\r][\n]"
+2018-08-27 19:03:29,278 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 19:03:29,283 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 200 OK
+2018-08-27 19:03:29,283 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 19:03:29,283 DEBUG http.headers - http-outgoing-0 << Content-Type: application/json;charset=utf-8
+2018-08-27 19:03:29,283 DEBUG http.headers - http-outgoing-0 << Content-Length: 50
+2018-08-27 19:03:29,283 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 11:03:29 GMT
+2018-08-27 19:03:29,290 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely
+2018-08-27 19:03:46,605 DEBUG http.wire - http-outgoing-0 << "{synStatus:'1',synMsg:'[0xe5][0x90][0x8c][0xe6][0xad][0xa5][0xe5][0xa4][0xb1][0xe8][0xb4][0xa5]:[0xe7][0xad][0xbe][0xe5][0x90][0x8d][0xe4][0xb8][0xba][0xe7][0xa9][0xba]'}"
+2018-08-27 19:03:46,606 DEBUG conn.PoolingHttpClientConnectionManager - Connection [id: 0][route: {}->http://127.0.0.1:8888] can be kept alive indefinitely
+2018-08-27 19:03:46,606 DEBUG conn.PoolingHttpClientConnectionManager - Connection released: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:05:32,350 DEBUG protocol.RequestAddCookies - CookieSpec selected: default
+2018-08-27 19:05:32,366 DEBUG protocol.RequestAuthCache - Auth cache not set in the context
+2018-08-27 19:05:32,368 DEBUG conn.PoolingHttpClientConnectionManager - Connection request: [route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2018-08-27 19:05:32,389 DEBUG conn.PoolingHttpClientConnectionManager - Connection leased: [id: 0][route: {}->http://127.0.0.1:8888][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2018-08-27 19:05:32,392 DEBUG execchain.MainClientExec - Opening connection {}->http://127.0.0.1:8888
+2018-08-27 19:05:32,398 DEBUG conn.DefaultHttpClientConnectionOperator - Connecting to /127.0.0.1:8888
+2018-08-27 19:05:32,402 DEBUG conn.DefaultHttpClientConnectionOperator - Connection established 127.0.0.1:11372<->127.0.0.1:8888
+2018-08-27 19:05:32,403 DEBUG execchain.MainClientExec - Executing request POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:05:32,403 DEBUG execchain.MainClientExec - Target auth state: UNCHALLENGED
+2018-08-27 19:05:32,404 DEBUG execchain.MainClientExec - Proxy auth state: UNCHALLENGED
+2018-08-27 19:05:32,406 DEBUG http.headers - http-outgoing-0 >> POST /dx_cloud/receive/sysUser HTTP/1.1
+2018-08-27 19:05:32,406 DEBUG http.headers - http-outgoing-0 >> Content-Length: 0
+2018-08-27 19:05:32,407 DEBUG http.headers - http-outgoing-0 >> Host: 127.0.0.1:8888
+2018-08-27 19:05:32,407 DEBUG http.headers - http-outgoing-0 >> Connection: Keep-Alive
+2018-08-27 19:05:32,407 DEBUG http.headers - http-outgoing-0 >> User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)
+2018-08-27 19:05:32,407 DEBUG http.headers - http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "POST /dx_cloud/receive/sysUser HTTP/1.1[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "Content-Length: 0[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "Host: 127.0.0.1:8888[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "User-Agent: Apache-HttpClient/4.5.1 (Java/1.8.0_161)[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2018-08-27 19:05:32,407 DEBUG http.wire - http-outgoing-0 >> "[\r][\n]"
+2018-08-27 19:05:32,807 DEBUG http.wire - http-outgoing-0 << "HTTP/1.1 415 Unsupported Media Type[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "Server: Apache-Coyote/1.1[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "Content-Type: text/html;charset=utf-8[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "Content-Language: en[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "Content-Length: 1093[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "Date: Mon, 27 Aug 2018 11:05:32 GMT[\r][\n]"
+2018-08-27 19:05:32,808 DEBUG http.wire - http-outgoing-0 << "[\r][\n]"
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << HTTP/1.1 415 Unsupported Media Type
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << Server: Apache-Coyote/1.1
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << Content-Type: text/html;charset=utf-8
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << Content-Language: en
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << Content-Length: 1093
+2018-08-27 19:05:32,813 DEBUG http.headers - http-outgoing-0 << Date: Mon, 27 Aug 2018 11:05:32 GMT
+2018-08-27 19:05:32,818 DEBUG execchain.MainClientExec - Connection can be kept alive indefinitely

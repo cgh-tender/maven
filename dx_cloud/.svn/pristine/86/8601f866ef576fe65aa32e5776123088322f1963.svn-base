@@ -1,0 +1,12 @@
+#last update
+#Wed Oct 18 17:16:30 CST 2017
+#login 
+login=b
+secret=631a35adc7f64dd6ac8deeec93efee5f
+appname=jgptTojhxt
+returnToUrl=http://111.235.158.226:8250/newAudit/loading2.html
+
+#add url iframe Embed
+#iframeEmbedUrl=http://10.37.32.136:8086/BDOP/auditRights/checkRightsAndSessionId
+iframeEmbedUrl=http://10.37.31.24:8899/BDOP/auditRights/checkRightsAndSessionId
+#http://10.37.31.24:8899/BDOP/auditRights/checkRightsAndSessionId?roleId=1&menuId=1007&JSESSIONID=AABA3B917CE132CCABFC1ED738C8BC25

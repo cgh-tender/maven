@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="CityCode" table="city_code">
+		<id name="prov_id" column="prov_id" type="string"></id>
+		<property name="prov_name" column="prov_name" type="string"/>
+		<property name="latn_id" column="latn_id" type="string"/>
+		<property name="latn_name" column="latn_name" type="string"/>
+		<property name="south_north" column="south_north" type="string"/>
+		<property name="region_type" column="region_type" type="string"/>
+		<property name="area_code" column="area_code" type="string"/>
+    </class>
+</hibernate-mapping>

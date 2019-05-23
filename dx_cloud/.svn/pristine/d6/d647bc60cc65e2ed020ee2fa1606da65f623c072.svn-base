@@ -1,0 +1,96 @@
+package com.dw.common;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.dw.model.User;
+
+
+public class AdminSessionUtil {
+	
+	public static String adminSessionKey = "dwsoft" ;
+	/**
+	 * 获取登录名
+	 * 使用的时候，根据业务进行调用
+	 */
+	public static String getCurrentOperName(HttpServletRequest request) {
+		AdminSession oper = getCurrentOper(request) ;
+		if ( null != oper ) return oper.getLoginName() ;
+		return null;
+	}
+	/**
+	 * 获取角色
+	 * 使用的时候，根据业务进行调用
+	 */
+	public static String getCurrentOperRole(HttpServletRequest request) {
+		AdminSession oper = getCurrentOper(request) ;
+		if ( null != oper ) return oper.getRole();
+		return null;
+	}
+	/**
+	 * 获取id
+	 * 使用的时候，根据业务进行调用
+	 */
+	public static int getCurrentOperCode(HttpServletRequest request) {
+		AdminSession oper = getCurrentOper(request) ;
+		System.out.println(oper);
+		if ( null != oper ) return oper.getId() ;
+		return 0;
+	}
+	
+	/**
+	 * 使用的时候，根据业务进行调用
+	 */
+	public static AdminSession getCurrentOper(HttpServletRequest request) {
+		return (AdminSession)request.getSession().getAttribute(adminSessionKey);
+	}
+	
+	
+	/***
+	 * 注销时使用
+	 * 
+	 */
+	public static void  removeSession(HttpServletRequest request) {
+		request.getSession().removeAttribute(adminSessionKey);
+	}
+	
+	/**
+	 * 登陆时调用此方法
+	 * @param request
+	 * @param operSession TODO
+	 */
+
+	public synchronized static void setCurrentOper(HttpServletRequest request,AdminSession operSession){
+		request.getSession().setMaxInactiveInterval(600);
+		request.getSession().setAttribute(adminSessionKey,operSession) ;
+	}
+	public synchronized static AdminSession toAdminSession(HttpServletRequest request,User operinfo){
+		AdminSession obj = new AdminSession();
+		obj.setLoginName(operinfo.getLoginName());
+		obj.setId(operinfo.getId());
+		obj.setPassword(operinfo.getPassword());
+		return obj ;
+	}
+	
+	public synchronized static void sessionCahe(HttpSession session,User am) {
+		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();   
+		ServletContext context = webApplicationContext.getServletContext(); 
+		HttpSession tempsession = (HttpSession) context.getAttribute("dw_" + am.getId());//TEMP_zhangsan
+		if(tempsession != null){
+			if(!tempsession.getId().equals(session.getId())){
+				context.removeAttribute("dw_" + am.getId());
+				tempsession.setAttribute("check", "check");
+				tempsession.invalidate();
+			}
+		}
+		/*session.setAttribute("admin", am);
+		context.setAttribute("session", session);
+		session.setAttribute("isLogin", "isLogin");
+		context.setAttribute("dw_" +am.getId(), session);
+		session.setAttribute("name", am.getLoginName());*/
+	}
+}

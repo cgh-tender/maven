@@ -1,0 +1,8 @@
+2018-04-13 17:56:35,757 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setMenu_id(java.lang.String) with value 123 (class java.lang.String)
+2018-04-13 17:56:35,757 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setJur_type(java.lang.Integer) with value 456 (class java.lang.Integer)
+2018-04-13 17:56:35,757 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setMenu_id(java.lang.String) with value 789 (class java.lang.String)
+2018-04-13 17:56:35,757 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setJur_type(java.lang.Integer) with value 110 (class java.lang.Integer)
+2018-04-13 17:56:59,336 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setMenu_id(java.lang.String) with value 123 (class java.lang.String)
+2018-04-13 17:56:59,336 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setJur_type(java.lang.Integer) with value 456 (class java.lang.Integer)
+2018-04-13 17:56:59,336 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setMenu_id(java.lang.String) with value 789 (class java.lang.String)
+2018-04-13 17:56:59,336 DEBUG beanutils.PropertyUtils - setSimpleProperty: Invoking method public void com.dw.model.Jur.setJur_type(java.lang.Integer) with value 110 (class java.lang.Integer)

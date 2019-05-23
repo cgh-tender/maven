@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="Jur" table="ums_jur">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="jur_id" column="jur_id" type="string"/>
+		<property name="jur_key" column="jur_key" type="string"/>
+		<property name="jur_value" column="jur_value" type="string"/>
+		<property name="jur_desc" column="jur_desc" type="string"/>
+		<property name="jur_parent_id" column="jur_parent_id" type="string"/>
+		<property name="jur_type" column="jur_type" type="integer"/>
+		<property name="create_time" column="create_time" type="string"/>
+		<property name="update_time" column="update_time" type="string"/>
+		<property name="menu_id" column="menu_id" type="string"/>
+ 	</class>
+</hibernate-mapping>

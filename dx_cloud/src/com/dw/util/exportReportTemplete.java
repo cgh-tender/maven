@@ -1,0 +1,396 @@
+package com.dw.util;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+  
+public class exportReportTemplete {
+	 public static void returnXSSFWorkbook(HttpServletResponse response,String fileName,List<Map> title,List<Map> values){
+		 SXSSFWorkbook sxss = new SXSSFWorkbook();
+		 long t1 = System.currentTimeMillis();
+		 try {
+	        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+	        sxss.createSheet("0");
+	        Sheet sheet = sxss.getSheetAt(0);
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+	        Row row = sheet.createRow(0);
+	        // 第四步，创建单元格，并设置值表头 设置表头居中
+	        CellStyle style = sxss.createCellStyle();
+	        style.setFillBackgroundColor(HSSFColor.YELLOW.index);
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+	        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        Font createFont = sxss.createFont();  //标题字体
+	        createFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	        createFont.setFontHeightInPoints((short)11);
+	        style.setFont(createFont);
+	        
+	        //声明列对象
+	        Cell cell = null;
+	         //创建标题
+	        short width = 20;
+	        for(int i=0;i<title.size();i++){
+	            cell = row.createCell(i);
+	            cell.setCellValue(title.get(i).get("field_name_CN")+"");
+	            if((title.get(i).get("field_name_CN")+"").length() > width) {
+	            	width = (short)(title.get(i).get("field_name_CN")+"").length();
+	            }
+	            cell.setCellStyle(style);
+	        }
+            sheet.setDefaultColumnWidth(width);
+            CellStyle style1 = sxss.createCellStyle();
+            style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+            style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        //创建内容
+	        for(int i=0;i<values.size();i++){
+	            row = sheet.createRow(i + 1);
+	            for(int j=0;j<title.size();j++){
+	            	String en = title.get(j).get("field_name_EN")+"";
+	            	String value = String.valueOf(values.get(i).get(en) == null ? "" : values.get(i).get(en));
+	            	cell = row.createCell(j);
+	            	if(isNum(value)){
+	            		cell.setCellValue(Double.parseDouble(value));
+	             	}else{
+	             		cell.setCellValue(value);
+	             	}
+	            	cell.setCellStyle(style1);
+	             }
+	         }
+	        
+		 }catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			response.reset();
+	    	setResponseHeader(response, fileName+".xlsx");
+    		OutputStream os = null;
+			try {
+				os = response.getOutputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+    			sxss.write(os);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		long t2 = System.currentTimeMillis();
+    		System.out.println(fileName+"写入Excel 消耗时间："+ (t2-t1)/60+"秒");
+		}
+	 }
+	 
+	 public static void returnXSSFWorkbookM(HttpServletResponse response,String fileName,List<Map<String,String>> title,List<Map<String,String>> values){
+		 SXSSFWorkbook sxss = new SXSSFWorkbook();
+		 long t1 = System.currentTimeMillis();
+		 try {
+	        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+	        sxss.createSheet("0");
+	        Sheet sheet = sxss.getSheetAt(0);
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+	        Row row = sheet.createRow(0);
+	        // 第四步，创建单元格，并设置值表头 设置表头居中
+	        CellStyle style = sxss.createCellStyle();
+	        style.setFillBackgroundColor(HSSFColor.YELLOW.index);
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+	        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        Font createFont = sxss.createFont();  //标题字体
+	        createFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	        createFont.setFontHeightInPoints((short)11);
+	        
+	        style.setFont(createFont);
+	        
+	        //声明列对象
+	        Cell cell = null;
+	         //创建标题
+	        short width = 20;
+	        for(int i=0;i<title.size();i++){
+	            cell = row.createCell(i);
+	            cell.setCellValue(title.get(i).get("field_name_CN")+"");
+	            if((title.get(i).get("field_name_CN")+"").length() > width) {
+	            	width = (short)(title.get(i).get("field_name_CN")+"").length();
+	            }
+	            cell.setCellStyle(style);
+	        }
+            sheet.setDefaultColumnWidth(width);
+            CellStyle style1 = sxss.createCellStyle();
+            style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+            style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        //创建内容
+	        for(int i=0;i<values.size();i++){
+	            row = sheet.createRow(i + 1);
+	            for(int j=0;j<title.size();j++){
+	            	String en = title.get(j).get("field_name_EN")+"";
+	            	String value = String.valueOf(values.get(i).get(en) == null ? "" : values.get(i).get(en));
+	            	cell = row.createCell(j);
+	            	if(isNum(value)){
+	            		cell.setCellValue(Double.parseDouble(value));
+	             	}else{
+	             		cell.setCellValue(value);
+	             	}
+	            	cell.setCellStyle(style1);
+	             }
+	         }
+	        
+		 }catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			response.reset();
+	    	setResponseHeader(response, fileName+".xlsx");
+    		OutputStream os = null;
+			try {
+				os = response.getOutputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+    			sxss.write(os);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		long t2 = System.currentTimeMillis();
+    		System.out.println(fileName+"写入Excel 消耗时间："+ (t2-t1)/60+"秒");
+		}
+	 }
+	 
+	 public static void returnXSSFWorkbookO(HttpServletResponse response,String fileName,List<Map<String,String>> title,List<Map<String,Object>> values){
+		 SXSSFWorkbook sxss = new SXSSFWorkbook();
+		 long t1 = System.currentTimeMillis();
+		 try {
+	        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+	        sxss.createSheet("0");
+	        Sheet sheet = sxss.getSheetAt(0);
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+	        Row row = sheet.createRow(0);
+	        // 第四步，创建单元格，并设置值表头 设置表头居中
+	        CellStyle style = sxss.createCellStyle();
+	        style.setFillBackgroundColor(HSSFColor.YELLOW.index);
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+	        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        Font createFont = sxss.createFont();  //标题字体
+	        createFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	        createFont.setFontHeightInPoints((short)11);
+	        
+	        style.setFont(createFont);
+	        
+	        //声明列对象
+	        Cell cell = null;
+	         //创建标题
+	        short width = 20;
+	        for(int i=0;i<title.size();i++){
+	            cell = row.createCell(i);
+	            cell.setCellValue(title.get(i).get("field_name_CN")+"");
+	            if((title.get(i).get("field_name_CN")+"").length() > width) {
+	            	width = (short)(title.get(i).get("field_name_CN")+"").length();
+	            }
+	            cell.setCellStyle(style);
+	        }
+            sheet.setDefaultColumnWidth(width);
+            CellStyle style1 = sxss.createCellStyle();
+            style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 设置单元格水平居中
+            style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 设置单元格垂直居中
+	        //创建内容
+	        for(int i=0;i<values.size();i++){
+	            row = sheet.createRow(i + 1);
+	            for(int j=0;j<title.size();j++){
+	            	String en = title.get(j).get("field_name_EN")+"";
+	            	String value = String.valueOf(values.get(i).get(en) == null ? "" : values.get(i).get(en));
+	            	cell = row.createCell(j);
+	            	if(isNum(value)){
+	            		cell.setCellValue(Double.parseDouble(value));
+	             	}else{
+	             		cell.setCellValue(value);
+	             	}
+	            	cell.setCellStyle(style1);
+	             }
+	         }
+	        
+		 }catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			response.reset();
+	    	setResponseHeader(response, fileName+".xlsx");
+    		OutputStream os = null;
+			try {
+				os = response.getOutputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+    			sxss.write(os);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		try {
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    		long t2 = System.currentTimeMillis();
+    		System.out.println(fileName+"写入Excel 消耗时间："+ (t2-t1)/60+"秒");
+		}
+	 }
+	 
+    public static HSSFWorkbook getSSFWorkbook(String sheetName,List<Map> title,List<Map>  values, HSSFWorkbook wb){
+
+        // 第一步，创建一个HSSFWorkbook，对应一个Excel文件
+        if(wb == null){
+            wb = new HSSFWorkbook();
+        }
+        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+        HSSFSheet sheet = wb.createSheet(sheetName);
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+        HSSFRow row = sheet.createRow(0);
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+
+        //声明列对象
+        HSSFCell cell = null;
+         //创建标题
+        for(int i=0;i<title.size();i++){
+            cell = row.createCell(i);
+            cell.setCellValue(title.get(i).get("field_name_CN")+"");
+            cell.setCellStyle(style);
+        }
+         //创建内容
+        for(int i=0;i<values.size();i++){
+            row = sheet.createRow(i + 1);
+            for(int j=0;j<title.size();j++){
+            	String en = title.get(j).get("field_name_EN")+"";
+            	String value = String.valueOf(values.get(i).get(en) == null ? "" : values.get(i).get(en));
+            	if(isNum(value)){
+                    row.createCell(j).setCellValue(Double.parseDouble(value));
+             	}else{
+                    row.createCell(j).setCellValue(value);
+             	}
+             }
+         }
+        return wb;
+    }
+
+    
+    public static HSSFWorkbook getHSSFWorkbookWithOtherMap(String sheetName,List<Map<String,String>> title,List<Map<String,String>>  values, HSSFWorkbook wb){
+
+        // 第一步，创建一个HSSFWorkbook，对应一个Excel文件
+        if(wb == null){
+            wb = new HSSFWorkbook();
+        }
+        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+        HSSFSheet sheet = wb.createSheet(sheetName);
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+        HSSFRow row = sheet.createRow(0);
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+
+        //声明列对象
+        HSSFCell cell = null;
+         //创建标题
+        for(int i=0;i<title.size();i++){
+            cell = row.createCell(i);
+            cell.setCellValue(title.get(i).get("field_name_CN")+"");
+            cell.setCellStyle(style);
+        }
+         //创建内容
+        for(int i=0;i<values.size();i++){
+            row = sheet.createRow(i + 1);
+            for(int j=0;j<title.size();j++){
+            	String en = title.get(j).get("field_name_EN")+"";
+            	String value = String.valueOf(values.get(i).get(en) == null ? "" : values.get(i).get(en));
+            	if(isNum(value)){
+                    row.createCell(j).setCellValue(Double.parseDouble(value));
+             	}else{
+                    row.createCell(j).setCellValue(value);
+             	}
+             }
+         }
+        return wb;
+    }
+    
+    
+    
+	public static void ReturnResponse(HttpServletResponse response,String fileName,HSSFWorkbook wb){
+     	//响应到客户端
+    	try {
+		        response.reset();
+ 	    		setResponseHeader(response, fileName);
+	    		OutputStream os = response.getOutputStream();
+	    		wb.write(os);
+	    		os.flush();
+	    		os.close();
+    		} catch (Exception e){
+     			e.printStackTrace();
+    		}
+	}
+     
+  //发送响应流方法
+    public static void setResponseHeader(HttpServletResponse response, String fileName) {
+        try {
+            try {
+                fileName = new String(fileName.getBytes(),"ISO8859-1");
+            } catch (Exception e) {
+                 e.printStackTrace();
+            }
+            response.setContentType("application/octet-stream;charset=ISO8859-1");
+            response.setHeader("Content-Disposition", "attachment;filename="+ fileName);
+            response.addHeader("Pargam", "no-cache");
+            response.addHeader("Cache-Control", "no-cache");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }  
+    
+    //判断是不是数字，小数点
+    public static Boolean isNum(String data){
+     	String regex = "^[+-]?\\d+(\\.\\d+)?$";
+    	if(data.matches(regex)){
+    		return true;
+    	}else {
+    		return false;
+    	}
+     }
+}
+	
+	
+ 

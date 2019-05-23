@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <title></title>
+</head>
+<body>
+</body>
+<script src="jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script>$(document).ready(function () {
+    var method1 = 'ResidentialPopulationAttributeWorkplaceTracking';
+    var reqs = {dt:"20190306-20190306",prov_id: "pvct", city_id: "allct"};
+    var method = {method : method1,req:reqs};
+    $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8080/dx_cloud/export/findHead",
+        dataType:'json',
+        data: JSON.stringify(method),
+        contentType : 'application/json',
+        success: function(message){
+        	reqs["start"] = 0;
+        	reqs["limit"] = 10;
+        	method["req"] = reqs;
+        	$.ajax({
+                type: "post",
+                url: "http://127.0.0.1:8080/dx_cloud/export/findData",
+                dataType:'json',
+                data: JSON.stringify(method),
+                contentType : 'application/json',
+                success: function(json){
+                    console.log(json)
+                },
+                error: function(){
+                    // errorAlert('获取失败','',2,'无法获取信息列表，请联系管理员','350px',['确认','取消'])
+                }
+            });
+        	
+        },
+        error: function(){
+            // errorAlert('获取失败','',2,'无法获取信息列表，请联系管理员','350px',['确认','取消'])
+        }
+    });
+   console.log("http://127.0.0.1:8080/dx_cloud/export/exportExcel?message="+JSON.stringify(method));
+   
+    
+})</script>
+</html>

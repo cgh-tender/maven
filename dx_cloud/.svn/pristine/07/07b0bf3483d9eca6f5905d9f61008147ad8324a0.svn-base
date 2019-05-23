@@ -1,0 +1,14 @@
+package com.dw.servce.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.dw.model.ExportMessage;
+import com.dw.servce.IExportService;
+@Service("exportService")
+public class ExportServiceImpl implements IExportService {
+
+	@Override
+	public void test(ExportMessage message) {
+		System.out.println("hello world!!!");
+	}
+}

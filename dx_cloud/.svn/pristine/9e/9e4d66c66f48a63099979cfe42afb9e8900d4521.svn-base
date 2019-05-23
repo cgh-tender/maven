@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.dw.model">
+	<class name="RoleJur" table="ums_role_jur">
+		<id name="id" column="id" type="integer">
+		  <generator class="native" /> 
+		</id>
+		<property name="role_id" column="role_id" type="string"/>
+		<property name="jur_id" column="jur_id" type="string"/>
+		<property name="menu_id" column="menu_id" type="string"/>
+		
+ 	</class>
+</hibernate-mapping>

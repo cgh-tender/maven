@@ -1,0 +1,301 @@
+package com.dw.interceptor;
+
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.dw.common.AdminSession;
+import com.dw.common.AdminSessionUtil;
+import com.dw.model.ResultMessage;
+import com.dw.model.User;
+import com.dw.servce.IUserService;
+import com.dw.util.HttpRequest;
+import com.dw.util.PasswordUtil;
+import com.google.gson.Gson;
+
+public class MyInterceptor implements HandlerInterceptor {
+
+	@Autowired
+	IUserService userService;
+
+	/**
+	 * 在业务处理器处理请求之前被调用 如果返回false 从当前的拦截器往回执行所有拦截器的afterCompletion(),再退出拦截器链 如果返回true
+	 * 执行下一个拦截器,直到所有的拦截器都执行完毕 再执行被拦截的Controller 然后进入拦截器链,
+	 * 从最后一个拦截器往回执行所有的postHandle() 接着再从最后一个拦截器往回执行所有的afterCompletion()
+	 */
+	@SuppressWarnings("unused")
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		String mehtodName = "";
+		try {
+
+			System.out.println("handler:" + handler);
+			HandlerMethod handlerMethod = null;
+			if (handler instanceof HandlerMethod) {
+				handlerMethod = (HandlerMethod) handler;
+			} else {
+				return true;
+			}
+			java.lang.reflect.Method method = handlerMethod.getMethod();
+			mehtodName = method.getName();
+			System.out.println("mehtodName::::::" + mehtodName);
+			if (mehtodName.equals("getLoginUser") || mehtodName.equals("getQymhOutLogin")
+					|| "CrowdLogin".equals(mehtodName) || "receiveSynUser".equals(mehtodName)
+					|| "CrowdSsoOpenIdLogin".equals(mehtodName) || "getcheckMenPower".equals(mehtodName)
+					|| "catchTest".equals(mehtodName) || "fail".equals(mehtodName) || "delReal".equals(mehtodName)
+					|| "NondelReal".equals(mehtodName) || "availableProc".equals(mehtodName)
+					|| "failProc".equals(mehtodName) || "getByte".equals(mehtodName)
+					|| "getFiledMappingVals".equals(mehtodName)) {
+				return true;
+			}
+			// PropertiesUtils p = new PropertiesUtils();
+
+			// 如果是 外嵌不进行权限认证
+			if (request.getParameter("iframe") != null
+					&& Boolean.parseBoolean(request.getParameter("iframe").toString())
+					&& request.getParameter("menuId") != null && request.getParameter("roleId") != null
+					&& request.getParameter("JSESSIONID") != null)
+				return true;
+
+			Enumeration<String> e = request.getHeaders("Cookie");
+			String logname = "";
+			String jsessionid = "";
+			String[] logns;
+			while (e.hasMoreElements()) {
+				String logname2 = (String) e.nextElement();
+				if (!"".equals(logname2)) {
+					logns = logname2.split(";");
+					for (int i = 0; i < logns.length; i++) {
+						String logname1 = logns[i].substring(0, logns[i].indexOf("="));
+						if ("JSESSIONID".equals(logname1)) {
+							jsessionid = logns[i].substring(logns[i].indexOf("=") + 1, logns[i].length());
+							MySessionContext myc = MySessionContext.getInstance();
+							HttpSession sess = myc.getSession(jsessionid);
+
+							System.out.println("第一个CookieSessionId：" + jsessionid);
+
+							// System.out.println(((AdminSession)sess.getAttribute("UserSession")).getLoginName());
+
+							if (sess == null) {
+								ResultMessage resultMessge = new ResultMessage();
+								Gson json = new Gson();
+								PrintWriter out;
+								out = response.getWriter();
+								resultMessge.setCode("0");
+								resultMessge.setMsg("请重新登录！");
+								out.print(json.toJson(resultMessge));
+								return false;
+							}
+
+							if (sess.getAttribute("UserSession") == null) {
+								ResultMessage resultMessge = new ResultMessage();
+								Gson json = new Gson();
+								PrintWriter out;
+								out = response.getWriter();
+								resultMessge.setCode("0");
+								resultMessge.setMsg("请重新登录！");
+								out.print(json.toJson(resultMessge));
+								return false;
+							}
+							logname = ((AdminSession) sess.getAttribute("UserSession")).getLoginName();
+						}
+					}
+				}
+			}
+			String loginname = request.getParameter("loginname");
+			// 验证天源迪科登陆拦截
+			if ("".equals(logname) && loginname != null) {
+				System.out.println("验证天源迪科登陆拦截SessionId：：：" + loginname);
+				MySessionContext myc = MySessionContext.getInstance();
+				HttpSession sess = myc.getSession(loginname);
+				AdminSession sessionuser = ((AdminSession) sess.getAttribute("UserSession"));
+				System.out.println("验证天源迪科登陆拦截LoginName： " + sessionuser.getLoginName());
+				User user = new User();
+				user.setLoginName(sessionuser.getLoginName());
+				List<Map<String, String>> ll = userService.getUserList(user);
+				if (ll != null && ll.size() > 0) {
+					System.out.println("天源迪科登进入true");
+					return true;
+				} else {
+					System.out.println("天源迪科登进入false");
+					return false;
+				}
+
+			}
+			System.out.println("cookies1111:" + logname);
+			javax.servlet.http.Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+				for (int i = 0; i < cookies.length; i++) {
+					System.out.println("cookiesSessionId:" + cookies[i].getValue());
+					if ("JSESSIONID".equals(cookies[i].getName())) {
+						MySessionContext myc = MySessionContext.getInstance();
+						HttpSession sess = myc.getSession(cookies[i].getValue());
+						System.out.println("第二个CookieSessionId：" + cookies[i].getValue());
+						AdminSession sessionuser = ((AdminSession) sess.getAttribute("UserSession"));
+						System.out.println("sessionuser:---" + sessionuser);
+						System.out.println("sessionuser:---" + sessionuser.toString());
+						System.out.println("sessionuserName:---" + sessionuser.getLoginName());
+
+						if (sessionuser != null) {
+							User user = new User();
+							user.setLoginName(sessionuser.getLoginName());
+							List<Map<String, String>> ll = userService.getUserList(user);
+							if (ll != null && ll.size() > 0) {
+								return true;
+							} else {
+								ResultMessage resultMessge = new ResultMessage();
+								Gson json = new Gson();
+								PrintWriter out;
+								out = response.getWriter();
+								resultMessge.setCode("0");
+								resultMessge.setMsg("用户未登录");
+								out.print(json.toJson(resultMessge));
+								return false;
+							}
+						} else {
+							ResultMessage resultMessge = new ResultMessage();
+							Gson json = new Gson();
+							PrintWriter out;
+							try {
+								out = response.getWriter();
+								resultMessge.setCode("0");
+								resultMessge.setMsg("用户未登录");
+								out.print(json.toJson(resultMessge));
+							} catch (Exception e1) {
+								e1.printStackTrace();
+								return false;
+							}
+							return false;
+						}
+					}
+
+					// 是否已登录
+					/*
+					 * if( cookies[i].getName().equals(logname) && !"JSESSIONID".equals(logname)){
+					 * cookies[i].setMaxAge(1800); response.addCookie(cookies[i]); //
+					 * p.setValue("login", "b"); User user = new User(); user.setLoginName(logname);
+					 * 
+					 * List<Map<String,String>> ll = userService.getUserListByMd5Name(user); if(ll
+					 * != null && ll.size()>0 && sessionuser.getLoginName().equals(logname)){ return
+					 * true; }else { return false; } }
+					 */
+				}
+			}
+			/*
+			 * System.out.println("当前用户request："+request);
+			 * System.out.println("当前用户session："+request.getSession());
+			 * System.out.println("当前用户session下的用户："+request.getSession().getAttribute(
+			 * "UserSession"));
+			 * 
+			 * AdminSession sessionuser =
+			 * (AdminSession)request.getSession().getAttribute("UserSession");
+			 * 
+			 * System.out.println("session下的用户："+sessionuser);
+			 * System.out.println("session下的用户姓名："+sessionuser.getLoginName());
+			 */
+
+			/*
+			 * if(sessionuser!=null ){ return true; }else{
+			 * 
+			 * ResultMessage resultMessge = new ResultMessage(); Gson json=new Gson();
+			 * PrintWriter out; try { out = response.getWriter(); resultMessge.setCode("0");
+			 * resultMessge.setMsg("用户未登录"); out.print(json.toJson(resultMessge)); } catch
+			 * (Exception e1) { e1.printStackTrace(); return false; } return false; }
+			 */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		PrintWriter out;
+		try {
+			response.setContentType("application/x-json");
+			out = response.getWriter();
+			Gson json = new Gson();
+			Map<String, String> map = new HashMap<String, String>();
+			String roleid = request.getParameter("roleid");
+			String sessionid = request.getParameter("sessionid");
+			if (!"".equals(roleid) && roleid != null && !"".equals(sessionid) && sessionid != null) {
+				// 判断该用户是否登陆
+				String sessionResult = HttpRequest.sendGet("http://10.37.31.24:8899/BDOP/auditRights/checkLogin",
+						"mySessionId=" + sessionid.trim());
+				System.out.println("登录验证开始：：：sessionid=" + sessionid + "：：：：：：sessionResult=" + sessionResult);
+				if (sessionResult.indexOf("0") > 0) {
+					map.put("msg", "该用户未登录，请登录！");
+					map.put("code", "0");
+					out.print(json.toJson(map));
+					// return false;
+				}
+				System.out.println("登录验证通过：：：：：");
+				System.out.println("roleid" + roleid);
+				if (!"getmenQuery".equals(mehtodName) && !"getmenButtonQuery".equals(mehtodName)
+						&& !"getmenButtonQueryProvs".equals(mehtodName) && !"getcheckMenPower".equals(mehtodName)) {
+					String menuid = request.getParameter("menuid");
+					String buttonId = request.getParameter("buttonId");
+					String secRight = request.getParameter("secRight");
+					String s = HttpRequest.sendGet("http://10.37.31.24:8899/BDOP/auditRights/checkRights", "roleId="
+							+ roleid + "&menuId=" + menuid + "&buttonId=" + buttonId + "&secRight=" + secRight);
+					if (s.indexOf("0") > 0) {
+						map.put("msg", "没有权限！");
+						map.put("code", "2");
+						out.print(json.toJson(map));
+						return false;
+					} else {
+						return true;
+					}
+				} else {
+					return true;
+				}
+			}
+			map.put("msg", "请重新登录！");
+			map.put("code", "0");
+			out.print(json.toJson(map));
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} // 修改false
+		return true;
+	}
+
+	/**
+	 * 在业务处理器处理请求执行完成后,生成视图之前执行的动作 可在modelAndView中加入数据，比如当前时间
+	 */
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+	}
+
+	/**
+	 * 在DispatcherServlet完全处理完请求后被调用,可用于清理资源等
+	 * 
+	 * 当有拦截器抛出异常时,会从当前拦截器往回执行所有的拦截器的afterCompletion()
+	 */
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+	}
+
+	/**
+	 * 获取sing
+	 * 
+	 * @param ref
+	 * @param pwd
+	 * @return
+	 */
+	public static String getSign(String apiKey, String apiPwd) {
+		String seed = DateFormatUtils.format(new Date(), "yyyyMMdd");
+		String sign = DigestUtils
+				.md5Hex("apiKey=" + apiKey + "&apiPwd=" + DigestUtils.md5Hex(apiPwd) + "&seed=" + seed);
+		return sign;
+	}
+}

@@ -1,0 +1,49 @@
+package com.dw.model;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ExportMessage implements Serializable {
+	private String method = null;
+	private List<Object> req = new ArrayList<Object>();
+	private List<Object> header = new ArrayList<Object>();
+	private List<Object> data = new ArrayList<Object>();
+	private List<Class> paramType = new ArrayList<Class>();
+	public List<Object> getReq() {
+		return req;
+	}
+	public void setReq(List<Object> req) {
+		this.req = req;
+		int idx = 0;
+		if (req != null && (idx = req.size()) > 0) {
+			for (int i = 0; i < idx; i++) {
+				paramType.add(String.class);
+			}
+		}
+	}
+	public List<Object> getHeader() {
+		return header;
+	}
+	public void setHeader(List<Object> header) {
+		this.header = header;
+	}
+	public List<Object> getData() {
+		return data;
+	}
+	public void setData(List<Object> data) {
+		this.data = data;
+	}
+	public String getMethod() {
+		return method;
+	}
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	public List<Class> getParamType() {
+		return paramType;
+	}
+	public void setParamType(List<Class> paramType) {
+		this.paramType = paramType;
+	}
+}

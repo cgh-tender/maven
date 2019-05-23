@@ -1,0 +1,256 @@
+package com.dw.dao.impl;
+
+import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+
+import com.dw.common.StringUtil;
+import com.dw.common.base.TempJdbcDao;
+import com.dw.dao.ILogDao;
+import com.dw.model.Log;
+import com.dw.util.LogUtil;
+@Repository
+public class LogDao extends TempJdbcDao implements ILogDao {
+
+	public void createLogTable(String tableName) {
+		try {
+			String sql = "create table if not exists " +tableName + " like t_logs" ;
+			Session session=getCurrentSession();
+			Query q=session.createSQLQuery(sql);
+			q.executeUpdate();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<Log> findNearestLogs(int i) {
+		return null;
+	}
+	/**
+	 * 保存日志
+	 * @param log
+	 */
+	public void saveEntity(Log log) {
+		try {
+			Session session=getCurrentSession();
+			String sql = "insert into " 
+					+ LogUtil.generateLogTableName(0) 
+					+ "(c_operator,c_opername,c_operparams,c_operresult,c_resultmsg,c_opertime) "
+					+ "values(?,?,?,?,?,?)" ;
+			Query q=session.createSQLQuery(sql);
+q.setParameter(0, log.getOperator()).setParameter(1, log.getOperName())
+.setParameter(2, log.getOperParams()).setParameter(3,log.getOperResult())
+.setParameter(4, log.getResultMsg()).setParameter(5, log.getOperTime());
+			q.executeUpdate();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Map<String, Object>> getLogin(String loginName, String log_user_ID, String jSESSIONID) {
+		try {
+			StringBuffer sql = new StringBuffer("select t.*,timediff(t.log_uptime,DATE_SUB(NOW(),INTERVAL 30 MINUTE)) chickTime from ums_login t where 1=1 AND t.log_uptime > DATE_SUB(NOW(),INTERVAL 30 MINUTE) AND t.log_status='0'");
+			if(!"".equals(loginName) && !StringUtil.isEmpty(loginName)){
+				sql.append(" and log_user_EN='"+loginName+"' ");
+			}
+			if(!"".equals(log_user_ID) && !StringUtil.isEmpty(log_user_ID)){
+				sql.append(" and log_user_ID='"+log_user_ID+"' ");
+			}
+			if(!"".equals(jSESSIONID) && !StringUtil.isEmpty(jSESSIONID)){
+				sql.append(" and log_JSESSIONID='"+jSESSIONID+"' ");
+			}
+			return  querylist(sql.toString());
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public int upLogin(HashMap<String, String> logmessage) {
+		int res = 0;
+		try {
+			Session session = getCurrentSession();
+			String hql=" update ums_login  set ";
+			
+			if(null != logmessage.get("log_desc")){
+				hql+=" log_desc = '"+logmessage.get("log_desc")+"',";
+			}
+			if(null != logmessage.get("log_count")){
+				hql+=" log_count = '"+logmessage.get("log_count")+"',";
+			}
+			if(null != logmessage.get("log_status")){
+				hql+=" log_status = '"+logmessage.get("log_status")+"',";
+			}
+			hql = hql.substring(0, hql.length() -1);
+			if(null != logmessage.get("log_id")){
+				hql+=" where 1=1 and ";
+				hql+= "log_id = "+ Integer.parseInt(logmessage.get("log_id").toString());
+				
+				if(null != logmessage.get("log_JSESSIONID")){
+					hql+=" and log_JSESSIONID = '"+ logmessage.get("log_JSESSIONID").toString() + "'";
+					int i = session.createSQLQuery(hql).executeUpdate(); 
+					res = 1;
+				}
+			} else {
+				System.out.println("upLogin : log_id 没有正常的传入！");
+				res = 0;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			res = 0;
+		}
+		return res;
+	}
+
+	@Override
+	public void addLogin(HashMap<String, String> logmessage) {
+		ArrayList b = new ArrayList();
+		b.add("dsdod_admin");
+		if(!b.contains(logmessage.get("log_user_EN").toString())) {
+			try {
+				Date date=new Date(); 
+				DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String time = simpleDateFormat.format(date);
+				Session session=getCurrentSession();
+				String sql = "insert into ums_login" 
+						+ "(log_user_ID,log_user_EN,log_user_CN,log_JSESSIONID,log_time,log_uptime,log_desc,log_count,log_status) "
+						+ "values(?,?,?,?,?,?,?,?,?)" ;
+				Query q=session.createSQLQuery(sql);
+				q.setParameter(0, logmessage.get("log_user_ID").toString())
+				.setParameter(1, logmessage.get("log_user_EN").toString())
+				.setParameter(2, logmessage.get("log_user_CN").toString())
+				.setParameter(3, logmessage.get("log_JSESSIONID").toString())
+				.setParameter(4, time)
+				.setParameter(5, time)
+				.setParameter(6, logmessage.get("log_desc").toString())
+				.setParameter(7, logmessage.get("log_count").toString())
+				.setParameter(8, logmessage.get("log_status").toString());
+				q.executeUpdate();
+			} catch (HibernateException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void upType(String username,String JSESSIONID) {
+		try {
+			Date date=new Date(); 
+			DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String time = simpleDateFormat.format(date);
+			Session session = getCurrentSession();
+			String hql=" update ums_login set log_status = '0',log_uptime = '" + time ;
+			if(null != username){
+				hql+="' where 1=1 ";
+				if(null != JSESSIONID) {
+					hql+= "AND log_JSESSIONID = '" + JSESSIONID + "' ";
+				}
+				hql+= "AND log_user_EN = '"+ username +"' "
+					+ "AND log_uptime > DATE_SUB(NOW(),INTERVAL 30 MINUTE) ORDER BY log_uptime DESC LIMIT 1";
+				int i = session.createSQLQuery(hql).executeUpdate(); 
+			}else {
+				System.out.println("upLogin : log_id 没有正常的传入！");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String getModuleCode(String mETHOD) {
+		String menu_id = "";
+		try {
+			String sql="select t1.menu_id from ums_interface t1,ums_menu t2 where 1 = 1 and t1.interface_address LIKE '%" + mETHOD + "%' AND t1.menu_id = t2.menu_id";
+			List<Map<String, Object>> data = querylist(sql);
+			if(data.size() > 0) {
+				menu_id = data.get(0).get("menu_id").toString();
+			}else {
+				menu_id = "";
+			}
+			return menu_id;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return menu_id;
+	}
+
+	@Override
+	public void upLogMethod(HashMap<String, String> logMessing) {
+		try { 
+			String JsSessionId = logMessing.get("log_JSESSIONID");
+			Session session = getCurrentSession();
+			if(JsSessionId != null) {
+				if(logMessing.get("log_method") != null && !"".equals(logMessing.get("log_method"))) {//查询方法
+					String s = " select url_table_en,url_table_cn from url_table_name where url_table_en='"+logMessing.get("log_method")+"'";
+					List<Map<String, String>> querylist = (List<Map<String, String>>)querylist(s.toString());
+					if(querylist.size() > 0) {
+						String url_table_cn = querylist.get(0).get("url_table_cn").toString();
+						if(null != url_table_cn && !"".equals(url_table_cn) && !"NULL".equals(url_table_cn)) {
+							String sql = "update ums_login t,(SELECT (select b.log_method from(select IFNULL(log_method,'') log_method FROM ums_login where log_JSESSIONID='"
+									+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+									+ ")b) LIKE '%"+url_table_cn+",%' liked "
+									+ "FROM ums_login) d "
+									+ "SET t.log_method=CONCAT(IFNULL(log_method,''),'"+url_table_cn+",') "
+									+ "where 1=1 AND t.log_JSESSIONID='"+JsSessionId+"'"
+									+ "AND log_id IN (SELECT * FROM (select log_id FROM ums_login where log_JSESSIONID='"+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+									+ ")a) AND d.liked = 0";
+							int i = session.createSQLQuery(sql).executeUpdate(); 
+						}
+					}
+				}
+				if(logMessing.get("log_module") != null && !"".equals(logMessing.get("log_module"))) {//模块
+					String s = " select menu_id,menu_name from ums_menu where menu_id = '"+logMessing.get("log_module")+"'";
+					List<Map<String, String>> querylist = (List<Map<String, String>>)querylist(s.toString());
+					if(querylist.size() > 0) {
+						String menu_name = querylist.get(0).get("menu_name").toString();
+						String sql = "update ums_login t,(SELECT (select b.log_module from(select IFNULL(log_module,'') log_module FROM ums_login where log_JSESSIONID='"
+								+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+								+ ")b) LIKE '%"+menu_name+",%' liked "
+								+ "FROM ums_login) d "
+								+ "SET t.log_module=CONCAT(IFNULL(log_module,''),'"+menu_name+",') "
+								+ "where 1=1 AND t.log_JSESSIONID='"+JsSessionId+"'"
+								+ "AND log_id IN (SELECT * FROM (select log_id FROM ums_login where log_JSESSIONID='"+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+								+ ")a) AND d.liked = 0";
+						int i = session.createSQLQuery(sql).executeUpdate(); 
+					}
+				}
+				if(logMessing.get("log_downmethod") != null && !"".equals(logMessing.get("log_downmethod"))) {//下载方法
+					String s = " select url_table_en,url_cn from url_table_name where url_table_en='"+logMessing.get("log_downmethod")+"'";
+					List<Map<String, String>> querylist = (List<Map<String, String>>)querylist(s.toString());
+					if(querylist.size() > 0) {
+						String url_cn = querylist.get(0).get("url_cn").toString();
+						if(null != url_cn && !"".equals(url_cn) && !"NULL".equals(url_cn)) {
+							String sql = "update ums_login t,(SELECT (select b.log_downmethod from(select IFNULL(log_downmethod,'') log_downmethod FROM ums_login where log_JSESSIONID='"
+									+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+									+ ")b) LIKE '%"+url_cn+",%' liked "
+									+ "FROM ums_login) d "
+									+ "SET t.log_downmethod=CONCAT(IFNULL(log_downmethod,''),'"+url_cn+",') "
+									+ "where 1=1 AND t.log_JSESSIONID='"+JsSessionId+"'"
+									+ "AND log_id IN (SELECT * FROM (select log_id FROM ums_login where log_JSESSIONID='"+JsSessionId+"' ORDER BY log_uptime DESC LIMIT 0,1 "
+									+ ")a) AND d.liked = 0";
+							int i = session.createSQLQuery(sql).executeUpdate(); 
+						}
+					}
+				}
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

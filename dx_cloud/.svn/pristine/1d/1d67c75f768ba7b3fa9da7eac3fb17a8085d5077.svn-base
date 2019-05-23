@@ -1,0 +1,49 @@
+package com.dw.web;
+
+import java.lang.reflect.Method;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.dw.model.ExportMessage;
+import com.dw.servce.IExportService;
+
+@RestController
+@RequestMapping("/export")
+public class ExportConstroller {
+	@Autowired
+	IExportService exportService;
+	@RequestMapping(value="/findHead",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ExportMessage findHead(@RequestBody ExportMessage message) throws Exception {
+		String methodName = message.getMethod();
+		Object o = reInvoke(methodName, message);
+		return message;
+	}
+	@RequestMapping(value="/findData",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ExportMessage findData(@RequestBody ExportMessage message) throws Exception {
+		String methodName = message.getMethod();
+		Object o = reInvoke(methodName, message);
+		return message;
+	}
+	private Object reInvoke(String methodName,ExportMessage message){
+        Method method = ReflectionUtils.findMethod(exportService.getClass(), methodName, ExportMessage.class);
+        return ReflectionUtils.invokeMethod(method, exportService, message);
+    }
+	public static void main(String[] args) {
+		  ApplicationContext APPLICATION_CONTEXT3=new ClassPathXmlApplicationContext(new String[]{"classpath:/applicationContext.xml","classpath:/applicationContext_db.xml"});
+		  IExportService exportService = (IExportService)APPLICATION_CONTEXT3.getBean("exportService");
+//		  exportService.test();
+		  ExportMessage message = new ExportMessage();
+		  Method method = ReflectionUtils.findMethod(exportService.getClass(), "test", ExportMessage.class);
+	      ReflectionUtils.invokeMethod(method, exportService, message);
+	}
+}

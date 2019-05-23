@@ -1,0 +1,541 @@
+package com.dw.common;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class FiledProcFilter {
+	private List<Map<String, String>> directFiledName;
+	private List<String> filedName;// 源表
+	private List<String> filedNames;// 用到的字段
+	private Map<String, String> requestUrlmap;
+	private Map<String, String> provCode;
+	private List<Map<String, String>> pv;
+	private List<Map<String, String>> ct;
+	private Boolean allpv = false;
+
+	public void setDirectFiledName(List<Map<String, String>> directFiledMapping) {
+		List<String> b = new ArrayList<String>();
+		for (int i = 0; i < directFiledMapping.size(); i++) {
+			Map<String, String> a = directFiledMapping.get(i);
+			b.add(a.get("field_code"));
+		}
+		this.filedName = b;
+		this.filedNames = b;
+		this.directFiledName = directFiledMapping;
+	}
+
+	/**
+	 * 进行封装 count
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public String getCountSql(String sql) {
+
+		return "select concat(count(*),'') rows from (select a.* from (" + sql + ") a) a";
+	}
+
+	/**
+	 * 进行封装 分页
+	 * 
+	 * @param sql
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	public String getPageSql(String sql, String pageNo, String pageSize) {
+		return "select a.* from (" + sql + ") a where 1 = 1 limit " + pageNo + "," + pageSize;
+	}
+
+	public List<Map<String, String>> getNUllTableHead() {
+		try {
+			List<Map<String, String>> r = new ArrayList<Map<String, String>>();
+			Map<String, String> m = new HashMap<String, String>();
+			m = new HashMap<String, String>();
+			m.put("field_name_EN", getdt());
+			m.put("field_name_CN", "账期");
+			r.add(m);
+			m = new HashMap<String, String>();
+			m.put("field_name_EN", getpr());
+			m.put("field_name_CN", "省份");
+			r.add(m);
+			if (filedName.contains("city_id") || filedName.contains("city_nm")) {
+				m = new HashMap<String, String>();
+				m.put("field_name_EN", getct());
+				m.put("field_name_CN", "地市");
+				r.add(m);
+			}
+			m = new HashMap<String, String>();
+			m.put("field_name_EN", "total");
+			m.put("field_name_CN", "总记录数");
+			r.add(m);
+			for (int i = 0; i < filedNames.size(); i++) {
+				String f = filedNames.get(i);
+				m = new HashMap<String, String>();
+				m.put("field_name_EN", f + "_null");
+				m.put("field_name_CN", f + "空值率");
+				r.add(m);
+				m = new HashMap<String, String>();
+				m.put("field_name_EN", f + "_num");
+				m.put("field_name_CN", f + "空值数");
+				r.add(m);
+			}
+			return r;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getNUllALLPVSQL() {
+		String dt = getdt();
+		String pr = getpr();
+		String tb = requestUrlmap.get("tableName");
+		String hb = requestUrlmap.get("hiveName");
+		String[] dtt = requestUrlmap.get("dt").split("-");
+
+		String sql = "select " + pr + " from " + tb + " where 1 = 1 and " + getBhb() + "='" + hb + "' and " + dt
+				+ " >= '" + dtt[0] + "' AND " + dt + " <= '" + dtt[1] + "' group by " + pr;
+		return sql;
+	}
+
+	public String getNullsql() {
+		String pr = getpr();
+		String dt = getdt();
+		String ct = getct();
+		if (!filedName.contains("city_id") && !filedName.contains("city_nm")) {// 不分地市的情况下
+			String where = "";
+			if (requestUrlmap.containsKey("prov_id")) {// 全部的情况下
+				where = " and a." + pr + "='" + requestUrlmap.get("prov_id") + "'";
+			}
+			String sql1 = getNullALL();
+			String sql2 = getNullAllPvCt();
+			String sql3 = getNUllLToC();
+			String unall = " union all ";
+			if (getAllpv()) {
+				sql2 = "";
+				unall = "";
+				where = "";
+			}
+			return "select " + sql3 + " from (" + sql1 + unall + sql2 + ") a where 1=1 " + where + "GROUP BY a." + dt
+					+ ", a." + pr;
+		} else {// 分地市的情况
+			String where = "";
+			String sql1 = getNullALL();
+			String sql2 = getNullAllPvCt();
+			String sql3 = getNullALLCt();
+			String sql4 = getNUllLToC();
+
+			String sql = "";
+			String pvS = requestUrlmap.get("prov_id");
+			String ctS = requestUrlmap.get("city_id");
+			String unall = " union all ";
+			if(getAllpv()) {
+				sql += " select " + sql4 + " from (" + sql2 + ") a where 1=1 " + where
+						+ " GROUP BY a." + dt + ", a." + pr + ", a." + ct;
+			}else {
+				if (pvS == null && ctS.equals("allct")) {
+					sql += " select " + sql4 + " from (" + sql1 + unall + sql2 + unall + sql3 + ") a where 1=1 " + where
+							+ " GROUP BY a." + dt + ", a." + pr + ", a." + ct;
+				} else if (pvS == null && !ctS.equals("allct")) {
+					where = " and a." + ct + "='" + requestUrlmap.get("city_id") + "'";
+					sql += " select " + sql4 + " from (" + sql1 + ") a where 1=1 " + where + " GROUP BY a." + dt + ", a."
+							+ pr + ", a." + ct;
+				} else if (pvS.equals("allpv") && ctS.equals("allct")) {
+					sql += " select " + sql4 + " from (" + sql2 + ") a where 1=1 " + where + " GROUP BY a." + dt + ", a."
+							+ pr + ", a." + ct;
+				} else if (pvS.equals("allpv") && !ctS.equals("allct")) {
+					where = " and a." + ct + "='" + requestUrlmap.get("city_id") + "'";
+					sql += " select " + sql4 + " from (" + sql1 + ") a where 1=1 " + where + " GROUP BY a." + dt + ", a."
+							+ pr + ", a." + ct;
+				} else if (!pvS.equals("allpv") && ctS.equals("allct")) {
+					where = " and a." + pr + "='" + requestUrlmap.get("prov_id") + "'";
+					sql += " select " + sql4 + " from (" + sql1 + unall + sql3 + ") a where 1=1 " + where + " GROUP BY a."
+							+ dt + ", a." + pr + ", a." + ct;
+				} else if (!pvS.equals("allpv") && !ctS.equals("allct")) {
+					where = " and a." + pr + "='" + requestUrlmap.get("prov_id") + "' and a." + ct + "='"
+							+ requestUrlmap.get("city_id") + "'";
+					sql += " select " + sql4 + " from (" + sql1 + ") a where 1=1 " + where + " GROUP BY a." + dt + ", a."
+							+ pr + ", a." + ct;
+				}
+			}
+			return sql;
+		}
+	}
+
+	/**
+	 * 获取空值率的 省份汇总
+	 * 
+	 * @return
+	 */
+	public String getNullALLCt() {
+		String dt = getdt();
+		String pr = getpr();
+		String ct = getct();
+		String tb = requestUrlmap.get("tableName");
+		String hb = requestUrlmap.get("hiveName");
+		String[] dtt = requestUrlmap.get("dt").split("-");
+		String sql = "select a." + dt + ",a." + pr + ",'allct' " + ct + ",a." + getBhb()
+				+ ",a.ch_nm,a.eg_nm,sum(total) total,"
+				+ "sum(null_num) null_num,round(sum(null_num)/sum(total)*100,2) null_rate from " + tb + " a  where "
+				+ getBhb() + "='" + hb + "' and a." + dt + " >= '" + dtt[0] + "' AND a." + dt + " <= '" + dtt[1]
+				+ "' group by a." + dt + ",a." + pr + ",a." + ct + ",a.eg_nm";
+
+		return sql;
+	}
+
+	/**
+	 * 全部数据
+	 * 
+	 * @return
+	 */
+	public String getNullALL() {
+		String dt = getdt();
+		String pr = getpr();
+		String ct = getct();
+		String tb = requestUrlmap.get("tableName");
+		String hb = requestUrlmap.get("hiveName");
+		String[] dtt = requestUrlmap.get("dt").split("-");
+		String cts = "";
+		if (filedName.contains("city_id") || filedName.contains("city_nm")) {
+			cts = ",a." + ct;
+		}
+		String sql = "select a." + dt + ",a." + pr + cts + ",a." + getBhb() + ",a.ch_nm,a.eg_nm,a.total,"
+				+ "a.null_num,a.null_rate from " + tb + " a  where " + getBhb() + "='" + hb + "' and a." + dt + " >= '"
+				+ dtt[0] + "' AND a." + dt + " <= '" + dtt[1] + "'";
+		return sql;
+	}
+
+	/**
+	 * 获取空值率的 全国汇总
+	 * 
+	 * @return
+	 */
+	public String getNullAllPvCt() {
+		String dt = getdt();
+		String pr = getpr();
+		String ct = getct();
+		String tb = requestUrlmap.get("tableName");
+		String hb = requestUrlmap.get("hiveName");
+		String[] dtt = requestUrlmap.get("dt").split("-");
+		String cts = "";
+		if (filedName.contains("city_id") || filedName.contains("city_nm")) {
+			cts = ",'allct' " + ct;
+		}
+		String sql = "select a." + dt + ",'allpv' " + pr + cts + ",a." + getBhb() + ",a.ch_nm,a.eg_nm,sum(total) total,"
+				+ "sum(null_num) null_num,round(sum(null_num)/sum(total)*100,2) null_rate from " + tb + " a  where "
+				+ getBhb() + "='" + hb + "' and a." + dt + " >= '" + dtt[0] + "' AND a." + dt + " <= '" + dtt[1]
+				+ "' group by a." + dt + ",a.eg_nm";
+
+		return sql;
+	}
+
+	/**
+	 * (case when pro_nm="811" then "北京" ...)
+	 * 
+	 * @param pn
+	 * @return
+	 */
+	public String getpvtoC(String pn) {
+		Charset inSet = Charset.forName("utf-8");
+		String sql = " (case " + pn;
+		for (int i = 0; i < pv.size(); i++) {
+			Map<String, String> a = pv.get(i);
+			String code = a.get("prov_id");
+			String name = a.get("prov_name"); // new String(a.get("prov_name").getBytes(),inSet);
+			sql += " when '" + code + "' then '" + name + "'";
+		}
+		return sql + " else " + pn + " end) ";
+	}
+
+	public String getcttoC(String cn) {
+		Charset inSet = Charset.forName("utf-8");
+		String sql = " (case " + cn;
+		for (int i = 0; i < ct.size(); i++) {
+			Map<String, String> a = ct.get(i);
+			String code = a.get("latn_id");
+			String name = a.get("latn_name");// new String(a.get("latn_name").getBytes(),inSet);
+			sql += " when '" + code + "' then '" + name + "'";
+		}
+		return sql + " else " + cn + " end) ";
+	}
+
+	public String getNUllLToC() {
+		String unit = "%";
+		String dt = getdt();
+		String pr = getpr();
+		String ct = getct();
+		String cts = "";
+		if (filedName.contains("city_id") || filedName.contains("city_nm")) {
+			cts = "," + getcttoC(ct) + " " + ct;
+		}
+
+		String sql = dt + "," + getpvtoC(pr) + " " + pr + cts + "," + getBhb() + ",total";
+		for (int i = 0; i < filedNames.size(); i++) {
+			String f = filedNames.get(i);
+			sql += ",MAX(CASE eg_nm WHEN '" + f + "' THEN concat(null_rate,'" + unit + "') ELSE '0" + unit + "' END) "
+					+ f + "_null";
+			sql += ",MAX(CASE eg_nm WHEN '" + f + "' THEN null_num ELSE 0 END) " + f + "_num";
+		}
+		return sql;
+	}
+
+	/**
+	 * 进行存储字段并且进行过滤
+	 * 
+	 * @param filedNames
+	 */
+	public void setFiledNames(List<String> filedNames) {
+		List<String> a = new ArrayList<String>();
+		a.add("id");
+
+		List<String> b = new ArrayList<String>();
+		for (int i = 0; i < filedNames.size(); i++) {
+			String key = filedNames.get(i);
+			if (!a.contains(key)) {
+				b.add(key);
+			}
+		}
+		this.filedNames = b;
+	}
+
+	public void setFiledName(List<String> filedName) {
+		this.filedName = filedName;
+	}
+
+	/**
+	 * 获取日期字段名称
+	 * 当传入的参数不在 bdt 里面的时候,传出 day 这个是数据的问题,如果出现别的情况进行修改
+	 * @return
+	 */
+	public String getdt() {
+		String a = null;
+		for (int i = 0; i < filedName.size(); i++) {
+			String k1 = filedName.get(i);
+			if (bdt.contains(k1)) {
+				a = k1;
+				continue;
+			}
+		}
+		if(a == null)a = "day";
+		return a;
+	}
+
+	/**
+	 * 获取省份名称
+	 * 
+	 * @return
+	 */
+	public String getpr() {
+		String a = null;
+		for (int i = 0; i < filedName.size(); i++) {
+			String k1 = filedName.get(i);
+			if (bpr.contains(k1)) {
+				a = k1;
+				continue;
+			}
+		}
+		return a;
+	}
+
+	/**
+	 * 获取地市名称
+	 * 
+	 * @return
+	 */
+	public String getct() {
+		String a = null;
+		for (int i = 0; i < filedName.size(); i++) {
+			String k1 = filedName.get(i);
+			if (bct.contains(k1)) {
+				a = k1;
+				continue;
+			}
+		}
+		return a;
+	}
+
+	public String getBhb() {
+		String a = null;
+		for (int i = 0; i < filedName.size(); i++) {
+			String k1 = filedName.get(i);
+			if (bhb.contains(k1)) {
+				a = k1;
+				continue;
+			}
+		}
+		return a;
+	}
+
+	private List<String> kn = new ArrayList<String>();// filedName
+	private List<String> bl = new ArrayList<String>();// filedName
+	private List<String> bdt = new ArrayList<String>();// dt
+	private List<String> bpr = new ArrayList<String>();// prov_id
+	private List<String> bct = new ArrayList<String>();// city_id
+	private List<String> bhb = new ArrayList<String>();// hivetable
+	private String kpi_id = "";
+
+	/**
+	 * 进行类的单例化
+	 * 
+	 * @author cgh
+	 */
+	private static class SingletonClassInstance {
+		private static final FiledProcFilter instance = new FiledProcFilter();
+	}
+
+	/**
+	 * 初始化字段的可能性
+	 */
+	public FiledProcFilter() {
+		System.out.println("create FiledProcFilter");
+		kn.add("tableName");
+		kn.add("hiveName");
+
+		bl.add("tableName");
+		bl.add("hiveName");
+		bl.add("prov_id");
+		bl.add("city_id");
+		bl.add("dt");
+		bl.add("day");
+		bl.add("day_id");
+		bl.add("month");
+
+		bdt.add("dt");
+		bdt.add("dts");
+		bdt.add("sd_date");
+		bdt.add("day_id");
+
+		bpr.add("pro_nm");
+		bpr.add("prov_id");
+		bpr.add("pro_id");
+
+		bct.add("city_id");
+		bct.add("city_nm");
+
+		bhb.add("tb_nm");
+		bhb.add("tb_en");
+	}
+
+	/**
+	 * 获取实例的接口
+	 * 
+	 * @return
+	 */
+	public static FiledProcFilter getInstance() {
+		return SingletonClassInstance.instance;
+	}
+
+	public List<String> getFiledNames() {
+		return filedNames;
+	}
+
+	public List<String> getBl() {
+		return bl;
+	}
+
+	public List<String> getBdt() {
+		return bdt;
+	}
+
+	public List<String> getBpr() {
+		return bpr;
+	}
+
+	public List<String> getBct() {
+		return bct;
+	}
+
+	public String getKpi_id() {
+		return kpi_id;
+	}
+
+	public void setKpi_id(String kpi_id) {
+		this.kpi_id = kpi_id;
+	}
+
+	public Map<String, String> getRequestUrlmap() {
+		return requestUrlmap;
+	}
+
+	/**
+	 * 存储 url 中的内容
+	 * 
+	 * @param requestUrlmap
+	 */
+	public void setRequestUrlmap(Map<String, String> requestUrlmap) {
+		this.requestUrlmap = requestUrlmap;
+	}
+
+	public Map<String, String> getProvCode() {
+		return provCode;
+	}
+
+	public void setProvCode(Map<String, String> provCode) {
+		this.provCode = provCode;
+	}
+
+	public List<Map<String, String>> getPv() {
+		return pv;
+	}
+
+	public void setPv(List<Map<String, String>> pv) {
+		this.pv = pv;
+	}
+
+	public List<Map<String, String>> getCt() {
+		return ct;
+	}
+
+	public void setCt(List<Map<String, String>> ct) {
+		this.ct = ct;
+	}
+
+	public List<String> getFiledName() {
+		return filedName;
+	}
+
+	public Boolean getAllpv() {
+		return allpv;
+	}
+
+	public void setAllpv(Boolean allpv) {
+		this.allpv = allpv;
+	}
+
+	public List<Map<String, String>> getDirectFiledName() {
+		return directFiledName;
+	}
+
+	public void setBhb(List<String> bhb) {
+		this.bhb = bhb;
+	}
+
+	public List<String> getKn() {
+		return kn;
+	}
+
+	public void setKn(List<String> kn) {
+		this.kn = kn;
+	}
+
+	public void setBl(List<String> bl) {
+		this.bl = bl;
+	}
+
+	public void setBdt(List<String> bdt) {
+		this.bdt = bdt;
+	}
+
+	public void setBpr(List<String> bpr) {
+		this.bpr = bpr;
+	}
+
+	public void setBct(List<String> bct) {
+		this.bct = bct;
+	}
+
+}
