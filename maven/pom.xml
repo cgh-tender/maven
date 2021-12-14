@@ -18,7 +18,7 @@
     <c3p0Version>0.9.5.2</c3p0Version>
     <mysqlVersion>5.1.37</mysqlVersion>
     <slf4jVersion>1.7.21</slf4jVersion>
-    <log4j2Version>2.11.0</log4j2Version>
+    <log4j2Version>2.16.0</log4j2Version>
     <jstlVersion>1.2</jstlVersion>
     <servletApiVersion>3.1.0</servletApiVersion>
     <junitVersion>4.12</junitVersion>
